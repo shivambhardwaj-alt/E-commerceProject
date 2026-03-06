@@ -1,0 +1,252 @@
+PRODUCT SAMPLE  ==== 
+
+
+{
+  _id: "aaaab",
+
+  // BASIC INFO
+  name: "Men Round Neck Pure Cotton T-shirt",
+  slug: "men-round-neck-pure-cotton-tshirt",
+  brand: "WinterX",
+  description: {
+    short: "Soft cotton t-shirt for daily winter wear",
+    long: "This men’s round neck pure cotton t-shirt is designed for comfort and durability. Ideal for mild winters and layering under jackets."
+  },
+
+  // PRICING
+  pricing: {
+    mrp: 299,
+    sellingPrice: 200,
+    discountPercentage: 33,
+    currency: "INR",
+    taxIncluded: true,
+    gstPercentage: 5
+  },
+
+  // CATEGORIZATION
+  category: "Men",
+  subCategory: "Topwear",
+  productType: "T-shirt",
+  season: ["Winter"],
+  collection: "Winter Essentials 2025",
+
+  // VARIANTS (CRITICAL FOR REAL PROJECT)
+  variants: [
+    {
+      variantId: "BLK-M",
+      color: "Black",
+      size: "M",
+      sku: "MN-TSH-BLK-M",
+      stock: 20,
+      images: ["img1", "img2"]
+    },
+    {
+      variantId: "BLK-L",
+      color: "Black",
+      size: "L",
+      sku: "MN-TSH-BLK-L",
+      stock: 15,
+      images: ["img1", "img2"]
+    }
+  ],
+
+  // ATTRIBUTES (FOR FILTERS)
+  attributes: {
+    material: "100% Cotton",
+    fit: "Regular Fit",
+    neckline: "Round Neck",
+    sleeve: "Short Sleeve",
+    fabricWeight: "180 GSM",
+    stretchable: false
+  },
+
+  // WINTER-SPECIFIC
+  winterSpecs: {
+    temperatureRating: "10°C - 20°C",
+    layeringFriendly: true,
+    insulationLevel: "Light"
+  },
+
+  // SIZE & FIT
+  sizeGuide: {
+    modelHeight: "6ft",
+    modelSize: "L",
+    fitAdvice: "True to size"
+  },
+
+  // SHIPPING & RETURNS
+  shipping: {
+    weightInGrams: 250,
+    dimensions: "30x25x2 cm",
+    freeShipping: true,
+    estimatedDeliveryDays: 4
+  },
+
+  returnPolicy: {
+    returnable: true,
+    returnDays: 7,
+    exchangeAllowed: true
+  },
+
+  // RATINGS & REVIEWS
+  ratings: {
+    average: 4.3,
+    totalReviews: 124,
+    breakdown: {
+      5: 80,
+      4: 25,
+      3: 10,
+      2: 5,
+      1: 4
+    }
+  },
+
+  // MARKETING FLAGS
+  tags: ["winter", "cotton", "men", "tshirt"],
+  bestseller: true,
+  featured: true,
+  newArrival: false,
+
+  // SEO (VERY IMPORTANT)
+  seo: {
+    title: "Men Cotton Winter T-shirt | WinterX",
+    description: "Buy premium cotton winter t-shirts for men.",
+    keywords: ["men winter t-shirt", "cotton t-shirt"]
+  },
+
+  // STATUS
+  isActive: true,
+  isDeleted: false,
+
+  createdAt: 1716621345448,
+  updatedAt: 1716621345448
+}
+
+
+
+
+// USER SAMPLE DATA
+{
+  _id: "user123",
+  role: "customer", // admin, seller
+
+  personalInfo: {
+    name: "Shivam Bhardwaj",
+    email: "shivam@gmail.com",
+    phone: "9XXXXXXXXX",
+    isVerified: true
+  },
+
+  addresses: [
+    {
+      addressId: "addr1",
+      name: "Home",
+      line1: "Street 10",
+      city: "Delhi",
+      state: "Delhi",
+      pincode: "110001",
+      country: "India",
+      isDefault: true
+    }
+  ],
+
+  preferences: {
+    sizePreference: "L",
+    colorPreference: ["Black", "Navy"],
+    notifications: {
+      email: true,
+      sms: true,
+      whatsapp: true
+    }
+  },
+
+  wallet: {
+    balance: 200,
+    loyaltyPoints: 150
+  },
+
+  createdAt: 1716621345448
+}
+
+
+
+
+// ==== ORDER SAMPLE DATA FOR THIS {
+  _id: "order789",
+  userId: "user123",
+
+  items: [
+    {
+      productId: "aaaab",
+      variantId: "BLK-M",
+      quantity: 2,
+      price: 200
+    }
+  ],
+
+  pricing: {
+    subtotal: 400,
+    discount: 50,
+    shipping: 0,
+    tax: 20,
+    total: 370
+  },
+
+  payment: {
+    method: "UPI",
+    status: "Paid",
+    transactionId: "txn123"
+  },
+
+  orderStatus: "Shipped",
+
+  shippingAddress: "addr1",
+
+  timeline: {
+    orderedAt: 1716621345448,
+    shippedAt: 1716621349999,
+    deliveredAt: null
+  }
+}
+
+
+
+// COUPON FOR THISS ==============
+
+{
+  code: "WINTER20",
+  discountType: "percentage",
+  value: 20,
+  minOrderValue: 500,
+  maxDiscount: 200,
+  usageLimit: 1000,
+  expiresAt: 1735689600000,
+  isActive: true
+}
+
+
+//SHIPMENT DATA
+
+
+
+{
+  orderId: "order789",
+  courier: "Delhivery",
+  trackingId: "DLV123456",
+  status: "In Transit",
+  expectedDelivery: "2025-01-05"
+}
+
+
+
+//// === ADMIN ANALYTICS SAMPLE FOR THIS  
+
+{
+  date: "2025-01-01",
+  totalOrders: 120,
+  totalRevenue: 85000,
+  topProducts: ["aaaab"],
+  returnRate: "3.2%",
+  bestSize: "L",
+  bestColor: "Black"
+}
