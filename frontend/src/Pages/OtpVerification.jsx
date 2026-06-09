@@ -4,13 +4,19 @@ import {toast} from 'react-toastify';
 import { ShopContext } from '../context/ShopContext';
 import { useNavigate } from 'react-router-dom';
 
+// i need information of the  user here for resending the  otp atleast email 
+
+
+
+
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isComplete, setIsComplete] = useState(false);
-  const inputRefs = useRef([]);   // i will learn use  of useRef
+  const inputRefs = useRef([]);  // usage of userRef should be mastered
   const [loading,setLoading] = useState(false);
-  const{backendUrl,verificationToken,setVerificationToken,userToken,setUserToken} = useContext(ShopContext);
+  const{backendUrl,verificationToken,setVerificationToken,userToken,setUserToken  } = useContext(ShopContext);
+
   const navigate = useNavigate();
   const handleChange = (index, value) => {
     if (value.length > 1) return;
@@ -63,13 +69,15 @@ const handleOtpRequest = async () => {
       backendUrl + '/api/user/otp', 
       payload
     );
-    console.log(data);
     
+    console.log(data)
     if (data.success) {
+
       setUserToken(data.userToken);
       toast.success('Verified successfully!');
       localStorage.setItem('userToken',data.userToken);
       navigate('/'); 
+      
     } else {
       toast.error(data.message || 'Verification failed');
     }
@@ -80,6 +88,31 @@ const handleOtpRequest = async () => {
     setLoading(false); 
   }
 };
+
+
+// ==================== HANDLING RESENDING OTP REQUEST HERE ===================
+
+
+const handleResentOTP = async() => {
+  try{
+    const payload = {verificationToken : verificationToken};
+    const {data} = await axios.post(backendUrl +  "/api/user/resend-otp" , payload );
+    if(data.success){
+      toast.info("Check Your Email Again!");
+    }else{
+      toast.error("Error in sending Otp");
+    }
+  }catch(error){
+    toast.error("Resending Failed");
+    
+  }
+
+}
+
+
+
+
+
 
 
 
@@ -120,7 +153,7 @@ const handleOtpRequest = async () => {
 
         {isComplete && (
           <div className="bg-green-50 border border-green-200 text-green-800 px-6 py-3 rounded-xl mb-6 text-center font-medium">
-            OTP verified successfully!
+            SUBMIT YOUR OTP
           </div>
         )}
 
@@ -135,7 +168,8 @@ const handleOtpRequest = async () => {
           <div className="text-center">
             <p className="text-sm text-gray-500">
               Didn't receive code? 
-              <button className="font-semibold text-blue-600 hover:text-blue-700 ml-1">
+              {/* Adding logic here to resend the otp for the user */}
+              <button className="font-semibold text-blue-600 hover:text-blue-700 ml-1" onClick={() => handleResentOTP()}>
                 Resend
               </button>
             </p>

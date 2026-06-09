@@ -4,9 +4,6 @@ import logger from '../utils/logger.js';
 
 
 const connectCloudinary = () => {
-  
-
-
 
         cloudinary.config({
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -14,7 +11,6 @@ const connectCloudinary = () => {
             api_secret: process.env.CLOUDINARY_SECRET_KEY,
             secure: true
             });
-
 
         logger.info("Cloudinary is Connected !!!!");
 

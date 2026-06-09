@@ -9,6 +9,7 @@ import rateLimit from 'express-rate-limit';
 import productRoutes from './routes/productRoutes.js';
 import adminRouter from './routes/adminRoutes.js';
 import connectCloudinary from './config/connectCloudinary.js';
+import { testConnection } from './config/nodemailer.js';
 
 
 const app = express();
@@ -27,26 +28,26 @@ app.get('/', (req, res) => {
 });
 
 
-
-
-
-
-
-
 // ==========ESTABLISHING CONNECTION AND STARTING THE SERVER ==============
 const startServer = async () => {
     try {
         await connectDB();
         connectCloudinary();
+        // ==================== TESTING NODEMAILER HERE =========================
+        (async() => {
+            try  {
+                
+                await testConnection();
+                logger.info("SMTP Connection Succesfully Established");
 
+            }catch(error){
+                logger.error("SMTP Connection failed!");
+            }
+        })();
+        // ====================== ROUTES HERE =======================================
         app.use('/api/user',userRouter);
         app.use('/api/product',productRoutes);
         app.use('/api/admin',adminRouter);
-
-
-
-
-
 
        app.listen(PORT, () => {
             logger.info(`Sever is running on ${PORT}`);

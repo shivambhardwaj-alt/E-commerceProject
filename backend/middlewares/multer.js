@@ -34,10 +34,10 @@ const limits = {
     fileSize: 5 * 1024 * 1024,
 };
 
-const upload = multer({ 
+const uploads = multer({ 
     storage: storage,
     fileFilter: fileFilter,
     limits: limits
 });
 
-export default upload;
+export default uploads;

@@ -1,42 +1,36 @@
-import React, { useState } from 'react'
-import Navbar from './Components/Navbar'
-import Sidebar from './Components/Sidebar'
-import Add from '../src/Pages/Add.jsx';
-import Order from '../src/Pages/Order.jsx';
-import List from '../src/Pages/List.jsx';
-import {Route,Routes} from 'react-router-dom';
-import Login from './Components/Login.jsx';
-const backendURL = "https://localhost:4000";
-
+import React from 'react'
+import UploadPage from './pages/UploadPage.jsx';
+import Login from "./pages/Login.jsx";
+import Sidebar from './components/Sidebar.jsx';
+import { adminContext } from './context/AdminContext.jsx';
+import { useContext } from 'react';
+import {Routes,Route} from 'react-router-dom';
+import Dashboard from './pages/Dashboard.jsx';
+import Order from './pages/Order.jsx';
+import Customers from './pages/Customers.jsx'
+import Marketing from './pages/Marketing.jsx';
+import Product from './pages/Product.jsx';
 const App = () => {
-  const [token,settoken] = useState("");
+  const {adminToken,setAdminToken} = useContext(adminContext) ;
   return (
-    <div className='bg-gray-50 min-h-screen'>
-       {token=== "" && <Login settoken= {settoken} />}
-      <>
-      <Navbar />
-      
-      <hr />
-      <div className='flex w-full'>
-        <Sidebar />
-        <div className='w-[70%] mx-auto ml-[max(5vw,25px)] my-8 text-gray-600 text-base'>
+
+    (adminToken !== null ? <Login /> :
+    <div className='flex flex-row flex-1'>
+      <Sidebar />
+      <div className='flex-1'>
         <Routes>
-        <Route path = '/add' element  = {<Add />} />
-        <Route path = '/orders'element  = {<Order />} />
-        <Route path = '/list' element = {<List />} />
+          <Route path = '/' element = {<Dashboard />}/>
+          <Route path = '/orders' element = {<Order />} />
+           <Route path = '/customers' element = {<Customers />} />
+           <Route path = '/marketing' element = {<Marketing />} />
+           <Route path='/products' element = {<Product />} />
+           <Route path = 'add-product' element  = {<UploadPage />} />
         </Routes>
-
-        </div>
-
+        
       </div>
-      </>
-      
-      
-      
-      
-
+  
     </div>
-  )
+  ))
 }
 
 export default App

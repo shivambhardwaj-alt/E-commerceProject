@@ -16,7 +16,7 @@ const loginAdmin = (req, res) => {
             logger.warn("Invalid Credentials");
             return res.status(400).json({ success: false, message: "Invalid Credentials" });
         }
-        if (email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD) {
+        if (email !== process.env.ADMIN_GMAIL || password !== process.env.ADMIN_PASSWORD) {
             logger.warn("Invalid Admin Credentials");
             return res.status(400).json({ success: false, message: "Invalid Admin Credentials" });
         }
@@ -49,83 +49,127 @@ const loginAdmin = (req, res) => {
 const addProduct = async (req, res) => {
     try {
         logger.info('Product Addition request generated here');
-
-        const payload = req.body.data;
-        const files = req.files;
-        
-
-        if (!payload) {
-            return res.status(400).json({ success: false, message: 'Product data is required' });
+        const dataForDatabase = req.body;
+        const imageFiles = req.files;
+        logger.info("Uploading images on cloudinary to getting the url");
+        const res = await uploadImagesToCloudinary(imageFiles);
+        if (res) {
+            logger.info("Got the urls from the cloudinary");
+        } else {
+            logger.info("Failed to get the url from cloudinary");
         }
+        //============== now adding the product into the database here//===============
+        logger.info("Adding the Product into the Database");
 
-        if (!files || !files.length) {
-            return res.status(400).json({ success: false, message: 'Product images are required' });
+        // making json of the product 
+
+        const product = {
+            name: dataForDatabase.name,
+            slug: dataForDatabase.slug,
+            brand: dataForDatabase.brand,
+            description: {
+                short: dataForDatabase.description.short,
+                long: dataForDatabase.description.long,
+            },
+            pricing: {
+                mrp: Number(dataForDatabase.pricing.mrp),
+                discountPercentage: Number(dataForDatabase.pricing.discountPercentage || 0),
+                gstPercentage: Number(dataForDatabase.pricing.gstPercentage || 0),
+                currency: dataForDatabase.pricing.currency || 'INR',
+                taxIncluded: dataForDatabase.pricing.taxIncluded,
+                sellingPrice: (() => {
+                    const mrp = Number(dataForDatabase.pricing.mrp || 0);
+                    const discountPercentage = Number(dataForDatabase.pricing.discountPercentage || 0);
+                    const gstPercentage = Number(dataForDatabase.pricing.gstPercentage || 0);
+
+                    const discounted = mrp - (mrp * (discountPercentage / 100));
+                    return discounted + (discounted * (gstPercentage / 100));
+                })(),
+            },
+            category: dataForDatabase.category,
+            subCategory: dataForDatabase.subCategory,
+            productType: dataForDatabase.productType,
+            //  images added to be here 
+            images: [res],
+            collection: dataForDatabase.collection,
+
+            variants: dataForDatabase.variants,
+
+            attributes: {
+                material: dataForDatabase.attributes.material,
+                fit: dataForDatabase.attributes.fit,
+                neckline: dataForDatabase.attributes.neckline,
+                sleeve: dataForDatabase.attributes.sleeve,
+                fabricWeight: dataForDatabase.attributes.fabricWeight,
+                stretchable: dataForDatabase.attributes.stretchable
+
+            },
+
+            winterSpecs: {
+                temperature_rating: dataForDatabase.winterSpecs.temperature_rating,
+                layeringFriendly: dataForDatabase.winterSpecs.layeringFriendly,
+                insulationLevel: dataForDatabase.winterSpecs.insulationLevel,
+
+            },
+            sizeGuide: {
+                modelHeight: dataForDatabase.sizeGuide.modelHeight,
+                modelSize: dataForDatabase.sizeGuide.modelSize,
+                fitAdvice: dataForDatabase.sizeGuide.fitAdvice,
+            },
+            shipping: {
+                weightInGrams: dataForDatabase.shipping.weightInGrams,
+                dimensions: dataForDatabase.shipping.dimensions,
+                freeShipping: dataForDatabase.shipping.freeShipping,
+                estimatedDeliveryDays: dataForDatabase.shipping.estimatedDeliveryDays,
+
+            },
+            returnPolicy: {
+                returnable: dataForDatabase.returnPolicy.returnable,
+                returnDays: dataForDatabase.returnPolicy.returnDays,
+                exchangeAllowed: dataForDatabase.returnPolicy.exchangeAllowed,
+            },
+            ratings: {
+                average: dataForDatabase.ratings.average,
+                totalReviews: dataForDatabase.ratings.totalReviews,
+                breakdown: {
+                    5: dataForDatabase.ratings.breakdown[5] || 0,
+                    4: dataForDatabase.ratings.breakdown[4] || 0,
+                    3: dataForDatabase.ratings.breakdown[3] || 0,
+                    2: dataForDatabase.ratings.breakdown[2] || 0,
+                    1: dataForDatabase.ratings.breakdown[1] || 0,
+                }
+
+            },
+            bestSeller: dataForDatabase.bestseller,
+            featured: dataForDatabase.featured,
+            newArrival: dataForDatabase.newArrival,
+            seo: {
+                title: dataForDatabase.seo.title,
+                description: dataForDatabase.seo.description,
+                keywords: dataForDatabase.seo.keywords,
+
+            },
+            isActive: dataForDatabase.isActive,
+            isDeleted: dataForDatabase.isDeleted,
+
         }
+        logger.info("Product formed to save into the Database");
+        const ProductToBeAdded = new productModel(product);
 
-        let imageUrls;
+        const savedProduct = await ProductToBeAdded.save();
 
-        try {
-            imageUrls = await uploadImagesToCloudinary(files);
-        } catch (err) {
-            logger.error('Cloudinary upload failed', err);
-            return res.status(502).json({
-                success: false,
-                message: 'Image upload failed. Please try again.'
-            });
-        }
+        console.log(savedProduct);
 
-
-        const slug = payload.slug ? payload.slug.toLowerCase() : generateSlug(payload.name);
-
-        const existing = await productModel.exists({ slug });
-        if (existing) {
-            return res.status(409).json({ success: false, message: 'Product slug already exists' });
-        }
-
-
-        if (!Array.isArray(payload.variants)) {
-            return res.status(400).json({ success: false, message: 'Variants must be an array' });
-        }
-
-        const skuSet = new Set();
-        for (const v of payload.variants) {
-            if (skuSet.has(v.sku)) {
-                return res.status(400).json({ success: false, message: `Duplicate SKU: ${v.sku}` });
-            }
-            skuSet.add(v.sku);
-        }
-
-
-        const pricing = payload.pricing || {};
-        if (pricing.mrp && pricing.sellingPrice && !pricing.discountPercentage) {
-            pricing.discountPercentage = Math.round(((pricing.mrp - pricing.sellingPrice) / pricing.mrp) * 100);
-        }
-
-        const productData = {
-            ...payload,
-            slug,
-            pricing,
-            image: imageUrls
-        };
-
-        const result = await productModel.create(productData);
-
-        logger.info('Product added successfully', { id: result._id });
+        logger.info(`Product saved successfully: ${savedProduct._id}`);
 
         return res.status(201).json({
             success: true,
-            message: 'Product Added Successfully',
-            result
+            message: "Product added successfully",
+            product: savedProduct,
         });
-       
-
     } catch (error) {
-        logger.error('Error happened in adding product', error);
-
-        return res.status(500).json({
-            success: false,
-            message: error.message || 'Product Addition Failed'
-        });
+        logger.error("Error happened in adding product file => AdminController Function => addProduct");
+        return res.status(500).json({ success: false, message: "Bad Request", error: error.message });
     }
 };
 

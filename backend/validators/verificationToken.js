@@ -1,7 +1,6 @@
 import {body,validationResult} from 'express-validator';
-
-
-
+import logger from '../utils/logger.js';
+// here what does mean with  the verification token 
 const verificationTokenValidation = [
     body('verificationToken')
     .exists().withMessage("Verification Token is required")
@@ -17,8 +16,6 @@ const verificationTokenValidation = [
 
 ]
 
-
-
 const verificationTokenValidator = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -30,6 +27,8 @@ const verificationTokenValidator = (req, res, next) => {
       }))
     });
   }
+
+  logger.info("Verification of the token is done !!");
   next();
 };
 

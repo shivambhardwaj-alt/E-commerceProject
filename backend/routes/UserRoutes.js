@@ -8,6 +8,11 @@ const userRouter = express.Router();
 
 userRouter.post('/login',validateUserLogin,validateErrors,loginUser);
 userRouter.post('/register',validateUserRegistration,validateErrors,registerUser);
-userRouter.post('/otp',otpValidation,otpValidator,verificationTokenValidation,verificationTokenValidator,otpHandler)
-userRouter.post('/resend-otp',verificationTokenValidation,verificationTokenValidator,resendOtpToTheUser);// not working
+userRouter.post('/otp',otpValidation,otpValidator,verificationTokenValidation,verificationTokenValidator,otpHandler);
+userRouter.post('/resend-otp',verificationTokenValidation,verificationTokenValidator,resendOtpToTheUser);
+
+
+
+
+
 export default userRouter;

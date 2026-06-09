@@ -3,17 +3,13 @@ import jwt from 'jsonwebtoken';
 import logger from '../utils/logger.js';
 
 
-
 const authUser = (req,res,next) => {
-
-
     try{    
         const token = req.headers['authorization']?.split(' ')[1] || req.body.userToken;
         if(!token){
             logger.warn("Token not provided");
             return res.status(401).json({success:false,message:"Unauthorized Action"});
         }
-
 
         const decodedToken = jwt.verify(token,process.env.JWT_SECRET);
         req.user = decodedToken;

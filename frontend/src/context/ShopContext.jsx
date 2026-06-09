@@ -8,12 +8,10 @@ export const ShopContext = createContext();
 const ShopContextProvider = (props) => {
   const currency = '$';
   const delivery_fee = 10;
-
   const [search, setSearch] = useState('');
   const [showSearch, setShowSearch] = useState(true);
   const [cartItems, setCartItems] = useState(new Map());
   const navigate = useNavigate()
-
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [wishList,setWishList] = useState(new Map());
@@ -92,28 +90,6 @@ const isInWishlist = (item_id) => {
 
 
 
-
-
-
-
-  // ===================== FUNCTIONT TO GET THE 
-  
-
-
-  
-
-
-
-
-
-
-
-
-
-   
-
-  
-
   const value = {
     products,
     currency,
@@ -126,8 +102,6 @@ const isInWishlist = (item_id) => {
     setUserToken,
     verificationToken,
     setVerificationToken,
-
-
     addToCart,
     getCartCount,
     setWishList,

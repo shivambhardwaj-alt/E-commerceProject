@@ -8,10 +8,10 @@ import { toast } from 'react-toastify';
 
 
 const Login = () => {
-  const { backendUrl, userToken, setUserToken, verificationToken, setVerificationToken } = useContext(ShopContext);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { backendUrl, userToken, setUserToken, verificationToken, setVerificationToken} = useContext(ShopContext);
+  const [currname, setCurrName] = useState("");
+  const [curremail, setCurrEmail] = useState("");
+  const [currpassword, setCurrPassword] = useState("");
   const [currentState, setCurrentState] = useState('Sign Up');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -20,7 +20,7 @@ const Login = () => {
   // ====================== HERE ON SUBMIT HANDLE FORM SUBMISSION ======================
 
   const onSubmitHandler = async () => {
-    if (!email || !password || (currentState === 'Sign Up' && !name)) {
+    if (!curremail || !currpassword || (currentState === 'Sign Up' && !currname)) {
       setError('Please fill all required fields');
       return;
     }
@@ -33,8 +33,10 @@ const Login = () => {
       const urlForRequest = backendUrl + '/api/user' + endPoint;
 
       const payload = currentState === 'Sign Up'
-        ? { name, email, password }
-        : { email, password };
+        ? { name : currname,email :  curremail, password : currpassword }
+        : { email : curremail, password : currpassword };
+      
+        // assign data here
 
       const { data } = await axios.post(urlForRequest, payload);
       
@@ -109,11 +111,11 @@ const Login = () => {
               <div>
                 <label className='block text-sm text-gray-700 font-medium mb-2 '>Full Name</label>
                 <input
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setCurrName(e.target.value)}
                   type="text"
                   className='w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-400/50 focus:outline-none transition-all duration-300 shadow-sm'
                   placeholder='Enter your full name'
-                  value={name}
+                  value={currname}
                   required
                 />
               </div>
@@ -122,11 +124,11 @@ const Login = () => {
             <div>
               <label className='block text-sm text-gray-700 font-medium mb-2'>Email Address</label>
               <input
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setCurrEmail(e.target.value)}
                 type="email"
                 className='w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-400/50 focus:outline-none transition-all duration-300 shadow-sm'
                 placeholder='your@email.com'
-                value={email}
+                value={curremail}
                 required
               />
             </div>
@@ -134,11 +136,11 @@ const Login = () => {
             <div>
               <label className='block text-sm text-gray-700 font-medium mb-2'>Password</label>
               <input
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setCurrPassword(e.target.value)}
                 type="password"
                 className='w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-400/50 focus:outline-none transition-all duration-300 shadow-sm'
                 placeholder='••••••••'
-                value={password}
+                value={currpassword}
                 required
               />
             </div>

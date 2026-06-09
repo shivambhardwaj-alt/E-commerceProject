@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import {generateOtp,sendMailOtp,generateVerificationToken} from '../services/otpgenerator.js';
 import {transporter,testConnection} from '../config/nodemailer.js';
 import logger from '../utils/logger.js';
+import { compareOtp } from '../utils/allCompare.js';
 
 
 
@@ -15,20 +16,25 @@ import logger from '../utils/logger.js';
   try {
     const { name, email, password } = req.body;
     const cleanEmail = email.toLowerCase();
-    await testConnection();
     logger.debug('Register attempt for email  =  %s',cleanEmail);
-
     const existing = await UserModel.findOne({ 'personalInfo.email': cleanEmail });
     if (existing) {
       logger.warn('Registration blocked - user already defined %s',cleanEmail);
       return res.status(409).json({ success: false, message: 'User already exists' });
     }
 
-    const otp = generateOtp();
+    const numericalOtp = generateOtp();
+    const otp = await bcrypt.hash(numericalOtp, 10);
+
+    
     
     const verificationToken = generateVerificationToken();
     const otp_expiry = new Date(Date.now() + 10 * 60 * 1000);
     const hashedPassword = await bcrypt.hash(password, 10);
+
+
+    // i should hash the otp also here 
+
 
     await UserModel.create({
       role: 'customer',
@@ -45,7 +51,7 @@ import logger from '../utils/logger.js';
     logger.info("User registered successfully %s",cleanEmail);
 
     
-    await sendMailOtp(cleanEmail, otp);
+    await sendMailOtp(cleanEmail, numericalOtp);
     logger.info("OTP send to the email %s",cleanEmail);
 
     return res.status(201).json({
@@ -72,18 +78,14 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
     logger.info("Attempt to login  %s",email);
     const cleanEmail = email.toLowerCase();
-    await testConnection();
-
     const user = await UserModel.findOne({
       'personalInfo.email': cleanEmail,
       isDeleted: false
     }).select('+password +personalInfo.isVerified');
-
     if (!user) {
       logger.warn("User not Found %s",cleanEmail);
       return res.status(404).json({ success: false, message: 'User not found' });
     }
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       logger.warn("Login Failed .Incorrect Password %s",cleanEmail);
@@ -136,36 +138,55 @@ const loginUser = async (req, res) => {
 const otpHandler = async(req,res) => {
   try{
     const {otp,verificationToken} = req.body;
+    
     logger.info("Otp verification attempt token  = %s",verificationToken);
-    const user = await UserModel.findOne({otp:otp,verificationToken:verificationToken,otp_expiry : {$gt : new Date()}});
+
+    //do it here step by  step 
+    const user = await UserModel.findOne({verificationToken : verificationToken});
     
     if(!user){
       logger.warn('OTP verification failed — invalid or expired token=%s', verificationToken);
-      return res.json(403).json({success:false,message:"otp-expired"});
+      return res.status(404).json({success:false,message:"User Not Found"});
     }
-
+    if(user.otp_expiry <= new Date()){
+      logger.warn("OTP timelimit Expired!");
+      return res.status(403).json({success : false,message: "otp-expired"});
+    }
+    const comparisonResult =  await compareOtp(otp,user.otp);
+    if(!comparisonResult){
+      logger.info("Wrong Otp filled");
+      return res.status(401).json({success : false, message : "Please fill otp correctly" });
+    }
     user.personalInfo.isVerified = true;
     user.otp = null;
     user.otp_expiry = null;
     user.verificationToken = null;
-
-
     await user.save();
     logger.info('User verified successfully: %s', user.personalInfo.email);
-
-
     // now give him jwt token 
-
     const userToken = jwt.sign({id:user._id,email:user.personalInfo.email},process.env.JWT_SECRET,{expiresIn:'15m'});
     res.status(200).json({success:true,userToken : userToken});
-
-
-
+    logger.info("Message after verifying user has been send !");
 
   }catch(error){
     logger.error('OTP verification error — %s', error.message);
     res.status(500).json({success:false,message:'Internal Error'});
 
+  }
+}
+
+
+//====================== RESEND OTP HANDLER =========================================
+
+
+const resendOTPHandler = async(req, res) => {
+  try{
+    console.log(req.verificationToken);
+
+
+  }catch(error){
+    logger.error("Function broke of resendOTPHandler");
+    return res.status(500).json({success : false, messagae : "Internal Error"});
   }
 }
 
@@ -181,6 +202,7 @@ const otpHandler = async(req,res) => {
 
 // ================================= API TO HANDLE THE RESEND OF THE OTP ========================
 
+// don't forget to limit count of resend otp
 const resendOtpToTheUser = async (req, res) => {
   try {
     const { verificationToken } = req.body;
@@ -192,36 +214,27 @@ const resendOtpToTheUser = async (req, res) => {
       return res.status(400).json({ success: false, message: "Verification token is required" });
     }
 
-    const userData = await UserModel.findOne({ verificationToken });
+    const userData = await UserModel.findOne({ verificationToken : verificationToken  });
 
     if (!userData) {
       logger.warn("Resend OTP failed — invalid token");
       return res.status(403).json({ success: false, message: "Invalid or expired token" });
     }
 
-    if (userData.personalInfo.isVerified) {
-      logger.warn("Resend OTP attempted for already verified user %s", userData.personalInfo.email);
-      return res.status(409).json({ success: false, message: "Account already verified" });
-    }
+    
 
-    const otp = generateOtp();
-    const newVerificationToken = generateVerificationToken();
-
+    const numericalotp = generateOtp();
+    const otp = await bcrypt.hash(numericalotp,10);
     userData.otp = otp;
-    userData.verificationToken = newVerificationToken;
+
     userData.otp_expiry = new Date(Date.now() + 10 * 60 * 1000);
-
     await userData.save(); 
-
-    await testConnection();
-    await sendMailOtp(userData.personalInfo.email, otp);
-
+    await sendMailOtp(userData.personalInfo.email, numericalotp);
     logger.info("OTP resent successfully to %s", userData.personalInfo.email);
-
     return res.status(200).json({
       success: true,
       message: "OTP resent successfully",
-      verificationToken: newVerificationToken
+      
     });
 
   } catch (error) {

@@ -34,7 +34,7 @@ const ratingSchema = new mongoose.Schema({
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: 5 },
   slug: { type: String,  unique: true, minlength: 5 }, 
-  brand: { type: String, required: true, default: "winter-x" },
+  brand: { type: String, required: true, default: "Winter-X" },
   description: {
     short: { type: String, required: true, minlength: 10 },
     long: { type: String }

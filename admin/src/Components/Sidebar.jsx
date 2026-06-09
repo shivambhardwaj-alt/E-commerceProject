@@ -1,27 +1,77 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import { assets } from '../assets/assets'
+import React, { useState } from 'react'
+import { assets } from '../assets/assets.js';
+import { NavLink } from 'react-router-dom';
 
 const Sidebar = () => {
+  const [isExpanded, setIsExpanded] = useState(true);
+  
+  const menuItems = [
+    { icon: assets.dashboard, label: 'Dashboard', path: '/' },
+    { icon: assets.orders, label: 'Orders', path: '/orders' },
+    { icon: assets.customer, label: 'Customers', path: '/customers' },
+    { icon: assets.marketing, label: 'Marketing', path: '/marketing' },
+    {icon : assets.order , label : "Products" , path : '/products'}
+
+
+    
+  ];
+
   return (
-    <div className='w -[18%] min-h-screen border-r-2'>
-        <div className = 'flex flex-col gap-6 pt-5 pl-5 text-[15px]'>
-          <NavLink  className  = 'flex items-center gap-3 border border-gray-300 border-r-0 py-2 px-3 rounded-l'to ="/add">
-            <img className='w-5 h-5' src={assets.add_icon} alt="" />
-            <p className='hidden md:block'>Add Items</p>
+    <div className='h-[100px] fixed top-0 left-0'>
+      <div 
+        className={`h-[100vh] relative left-0 border-r border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-lg transition-all duration-300 ease-in-out
+          ${isExpanded ? 'min-w-50' : 'min-w-15'}
+        `}
+      >
+        <nav className='flex flex-col gap-1 items-start p-3'>
+         
+          <div 
+            onClick={() => setIsExpanded(!isExpanded)}
+            className='w-full cursor-pointer'
+          >
+            <h1 className={`bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl px-4 py-2 text-white font-extrabold text-lg tracking-tight transition-all duration-300 shadow-md
+              ${isExpanded ? 'hidden md:block pl-5' : 'hidden'}
+            `}>
+              Winter-X
+            </h1>
+            <h1 className={` bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg px-3 py-2 text-white font-extrabold text-lg tracking-tight shadow-md transition-all duration-300
+              ${isExpanded ? 'md:hidden' : 'block'} 
+            `}>
+              W-X
+            </h1>
+          </div>
 
-          </NavLink>
-          <NavLink  className  = 'flex items-center gap-3 border border-gray-300 border-r-0 py-2 px-3 rounded-l'to ="/list">
-            <img className='w-5 h-5' src={assets.add_icon} alt="" />
-            <p className='hidden md:block'>List Items</p>
-
-          </NavLink>
-          <NavLink  className  = 'flex items-center gap-3 border border-gray-300 border-r-0 py-2 px-3 rounded-l'to ="/orders">
-            <img className='w-5 h-5' src={assets.order_icon} alt="" />
-            <p className='hidden md:block'>Orders</p>
-
-          </NavLink>
-        </div>
+          {/* Menu Items */}
+          {menuItems.map((item, index) => (
+            <NavLink 
+              key={index}
+              to={item.path}
+              className={({ isActive }) =>
+                `w-full transition-all duration-300 ease-in-out ${
+                  isActive 
+                    ? 'bg-gradient-to-r from-blue-100 to-blue-200 rounded-xl' 
+                    : 'hover:bg-blue-50 rounded-xl'
+                }`
+              }
+            >
+              <div 
+                className='flex flex-row gap-3 m-1 p-3 rounded-xl cursor-pointer hover:scale-[1.02] group'
+              >
+                <img 
+                  src={item.icon} 
+                  alt={item.label} 
+                  className='w-6 h-6 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-hover:brightness-110'
+                />
+                <h1 className={`font-light text-sm text-gray-700 transition-all duration-300 group-hover:text-blue-600 whitespace-nowrap
+                  ${isExpanded ? 'block' : 'hidden'}
+                `}>
+                  {item.label}
+                </h1>
+              </div>
+            </NavLink>
+          ))}
+        </nav>
+      </div>
     </div>
   )
 }

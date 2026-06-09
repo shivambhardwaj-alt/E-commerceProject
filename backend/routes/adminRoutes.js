@@ -3,17 +3,16 @@ import { adminValidationToArray, adminValidator } from '../validators/adminValid
 import { addProduct, loginAdmin } from '../controllers/adminController.js';
 import { createProductValidation, productValidationRequest } from '../validators/ProdctAddition.js';
 import uploads from '../middlewares/multer.js';
-import { parseFormData } from '../middlewares/formParsing.js';
 import authAdmin from '../middlewares/authAdmin.js';
+import { logPayload } from '../middlewares/printPayload.js';
+import { parseFormData } from '../middlewares/formParsing.js';
 
 
 const adminRouter = express.Router();
 adminRouter.post('/login',adminValidationToArray,adminValidator,loginAdmin);
 //  i have to add more routes for the admin related with profile 
-
-
-adminRouter.post('/addProduct',authAdmin,uploads.array('image',10),parseFormData,createProductValidation,productValidationRequest,addProduct);
-
+// authorization of admin is left here
+adminRouter.post('/addProduct', uploads.array('images',10),parseFormData,  addProduct);
 
 
 
