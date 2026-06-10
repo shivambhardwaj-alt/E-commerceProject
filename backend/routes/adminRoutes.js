@@ -6,16 +6,8 @@ import uploads from '../middlewares/multer.js';
 import authAdmin from '../middlewares/authAdmin.js';
 import { logPayload } from '../middlewares/printPayload.js';
 import { parseFormData } from '../middlewares/formParsing.js';
-
-
 const adminRouter = express.Router();
 adminRouter.post('/login',adminValidationToArray,adminValidator,loginAdmin);
-//  i have to add more routes for the admin related with profile 
-// authorization of admin is left here
-adminRouter.post('/addProduct', uploads.array('images',10),parseFormData,  addProduct);
-
-
-
-
-
+adminRouter.post('/addProduct', uploads.array('images',10),parseFormData,createProductValidation , productValidationRequest,addProduct);
+ 
 export default adminRouter;

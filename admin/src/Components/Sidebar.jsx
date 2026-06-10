@@ -1,31 +1,47 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/assets.js';
 import { NavLink } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
-  
+
   const menuItems = [
     { icon: assets.dashboard, label: 'Dashboard', path: '/' },
     { icon: assets.orders, label: 'Orders', path: '/orders' },
     { icon: assets.customer, label: 'Customers', path: '/customers' },
     { icon: assets.marketing, label: 'Marketing', path: '/marketing' },
-    {icon : assets.order , label : "Products" , path : '/products'}
+    { icon: assets.order, label: "Products", path: '/products' }
 
 
-    
+
   ];
 
+
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 900) {
+        setIsExpanded(false);
+      } else {
+        setIsExpanded(true);
+      }
+    }
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+
+  }, [])
   return (
-    <div className='h-[100px] fixed top-0 left-0'>
-      <div 
+    <div className={`h-[100vh] max-w-64 min-w-25 `}>
+      <div
         className={`h-[100vh] relative left-0 border-r border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-lg transition-all duration-300 ease-in-out
-          ${isExpanded ? 'min-w-50' : 'min-w-15'}
+            ${isExpanded ? 'w-50':'w-25'}
         `}
       >
         <nav className='flex flex-col gap-1 items-start p-3'>
-         
-          <div 
+
+          <div
             onClick={() => setIsExpanded(!isExpanded)}
             className='w-full cursor-pointer'
           >
@@ -43,23 +59,22 @@ const Sidebar = () => {
 
           {/* Menu Items */}
           {menuItems.map((item, index) => (
-            <NavLink 
+            <NavLink
               key={index}
               to={item.path}
               className={({ isActive }) =>
-                `w-full transition-all duration-300 ease-in-out ${
-                  isActive 
-                    ? 'bg-gradient-to-r from-blue-100 to-blue-200 rounded-xl' 
-                    : 'hover:bg-blue-50 rounded-xl'
+                `w-full transition-all duration-300 ease-in-out ${isActive
+                  ? 'bg-gradient-to-r from-blue-100 to-blue-200 rounded-xl'
+                  : 'hover:bg-blue-50 rounded-xl'
                 }`
               }
             >
-              <div 
+              <div
                 className='flex flex-row gap-3 m-1 p-3 rounded-xl cursor-pointer hover:scale-[1.02] group'
               >
-                <img 
-                  src={item.icon} 
-                  alt={item.label} 
+                <img
+                  src={item.icon}
+                  alt={item.label}
                   className='w-6 h-6 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-hover:brightness-110'
                 />
                 <h1 className={`font-light text-sm text-gray-700 transition-all duration-300 group-hover:text-blue-600 whitespace-nowrap

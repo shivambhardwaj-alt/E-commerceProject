@@ -52,7 +52,7 @@ const addProduct = async (req, res) => {
         const dataForDatabase = req.body;
         const imageFiles = req.files;
         logger.info("Uploading images on cloudinary to getting the url");
-        const res = await uploadImagesToCloudinary(imageFiles);
+        const imageUrls = await uploadImagesToCloudinary(imageFiles);
         if (res) {
             logger.info("Got the urls from the cloudinary");
         } else {
@@ -90,7 +90,7 @@ const addProduct = async (req, res) => {
             subCategory: dataForDatabase.subCategory,
             productType: dataForDatabase.productType,
             //  images added to be here 
-            images: [res],
+            images: imageUrls,
             collection: dataForDatabase.collection,
 
             variants: dataForDatabase.variants,
@@ -153,13 +153,11 @@ const addProduct = async (req, res) => {
             isDeleted: dataForDatabase.isDeleted,
 
         }
+        
         logger.info("Product formed to save into the Database");
         const ProductToBeAdded = new productModel(product);
 
         const savedProduct = await ProductToBeAdded.save();
-
-        console.log(savedProduct);
-
         logger.info(`Product saved successfully: ${savedProduct._id}`);
 
         return res.status(201).json({

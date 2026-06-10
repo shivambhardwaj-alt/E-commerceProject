@@ -15,8 +15,9 @@ const App = () => {
   return (
 
     (adminToken !== null ? <Login /> :
-    <div className='flex flex-row flex-1'>
-      <Sidebar />
+    <div className='flex flex-row flex-1 gap-5 sm:gap-8 md:gap-10 lg:gap-20 overflow-hidden'>
+      <Sidebar  className = 'max-w-64 '/>
+      <div className=' w-full transition-all duration-300'>
       <div className='flex-1'>
         <Routes>
           <Route path = '/' element = {<Dashboard />}/>
@@ -28,7 +29,7 @@ const App = () => {
         </Routes>
         
       </div>
-  
+  </div>
     </div>
   ))
 }
