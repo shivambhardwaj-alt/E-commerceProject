@@ -33,7 +33,7 @@ const Sidebar = () => {
 
   }, [])
   return (
-    <div className={`h-[100vh] max-w-64 min-w-25 `}>
+    <div className={`h-screen max-w-64 min-w-25 fixed left-0 top-0`}>
       <div
         className={`h-[100vh] relative left-0 border-r border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-lg transition-all duration-300 ease-in-out
             ${isExpanded ? 'w-50':'w-25'}

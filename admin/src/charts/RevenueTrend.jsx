@@ -114,7 +114,7 @@ const RevenueTrend = () => {
   return (
     <div className='bg-white p-6 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-200
     
-    md:max-w-125 max-w-1/2 md:max-h-[500px]
+
     '>
       <div className='flex flex-row justify-between items-start mb-2'>
         <div>

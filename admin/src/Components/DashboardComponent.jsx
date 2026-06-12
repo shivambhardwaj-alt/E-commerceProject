@@ -36,7 +36,7 @@ const DashboardComponent = () => {
   ];
 
   return (
-    <div className='grid md:grid-cols-4 sm:grid-cols-2 gap-4 px-4 py-6'>
+    <div className='grid lg:grid-cols-4 md:grid-cols-2 gap-6 px-1 py-6'>
       {stats.map((obj, index) => (
         <div 
           key={index} 

@@ -9,7 +9,12 @@ import addProducts from './add.png';
 import bag from './bag.png';
 import up  from './icons8-up-100.png';
 import down from './icons8-down-100.png';
-
+import winter_x from './winterx_form_side_image.svg';
+import calendar from './calendar.png';
+import filter from './filter.png';
+import list from './list.png';
+import del from './delete.png';
+import more from './more.png';
 
 const assets = {
     google,
@@ -23,6 +28,13 @@ const assets = {
     bag,
     up,
     down,
+    winter_x,
+    calendar,
+    filter,
+    list,
+    del,
+    more,
+
 
 }
 
