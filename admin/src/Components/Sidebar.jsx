@@ -10,8 +10,11 @@ const Sidebar = () => {
     { icon: assets.dashboard, label: 'Dashboard', path: '/' },
     { icon: assets.orders, label: 'Orders', path: '/orders' },
     { icon: assets.customer, label: 'Customers', path: '/customers' },
-    { icon: assets.marketing, label: 'Marketing', path: '/marketing' },
-    { icon: assets.order, label: "Products", path: '/products' }
+    { icon: assets.order, label: "Products", path: '/products' },
+    {icon:assets.analytics , label : "Analytics" , path : "/analytics"},// analytics
+
+    {icon : assets.offer , label : "Offers" , path :'/offers'},// settings
+    {icon : assets.settings , label:"Settings" , path : '/settings'},// discount
 
 
 

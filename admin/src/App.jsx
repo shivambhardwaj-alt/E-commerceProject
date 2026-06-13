@@ -8,7 +8,7 @@ import {Routes,Route} from 'react-router-dom';
 import Dashboard from './pages/Dashboard.jsx';
 import Order from './pages/Order.jsx';
 import Customers from './pages/Customers.jsx'
-import Marketing from './pages/Marketing.jsx';
+
 import Product from './pages/Product.jsx';
 import Navbar from './components/Navbar.jsx';
 const App = () => {
@@ -25,7 +25,7 @@ const App = () => {
           <Route path = '/' element = {<Dashboard />}/>
           <Route path = '/orders' element = {<Order />} />
            <Route path = '/customers' element = {<Customers />} />
-           <Route path = '/marketing' element = {<Marketing />} />
+           
            <Route path='/products' element = {<Product />} />
            <Route path = 'add-product' element  = {<UploadPage />} />
         </Routes>
