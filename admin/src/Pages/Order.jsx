@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useReducer } from 'react'
+import React, { useState, useEffect, useReducer, useMemo } from 'react'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { assets } from '../assets/assets';
 import Filter from '../components/Filter';
+import { useMatch } from 'react-router-dom';
 
 const statusColors = {
   Delivered: 'bg-green-100 text-green-700',
@@ -37,28 +38,11 @@ const Order = () => {
     { orderId: "ORD1020", customerName: "Aditya Saxena", product: "Laptop Backpack", quantity: 2, price: 1599, status: "Delivered", orderDate: "2026-06-10" },
   ];
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [isFocused, setIsFocused] = useState(false);
-  const [search, setSearch] = useState('');
-  
+
 
 
 
   // ====================== LOGIC FOR THE FILTERS ====================================
-  const filterReducer =(state,action) => {
-
-    switch(action.type){
-      case  "SET_SEARCH": return {...state, search: state.action.payload}
-      case "SET_START_DATE" : return {...state,startDate:state.action.payload}
-      case "SET_END_DATE" : return {...state,endDate:state.action.endDate}
-      case "STATUS" : return {...state,status: state.action.status }
-      case "SET_SORT" : return {...state, sortBy : state.action.sortBy}
-      case "RESET" : return  {initialState}
-      default : return state
-    }
-  }
-
   const initialState = {
     search : '',
     startDate : null ,
@@ -68,8 +52,69 @@ const Order = () => {
     isFocused : false,
     
   }
+  const filterReducer =(state,action) => {
 
-  const [filterState, dispatch] = useReducer(filterReducer, initialState);
+    switch(action.type){
+      case  "SET_SEARCH": return {...state, search: action.payload}
+      case "SET_START_DATE" : return {...state,startDate:action.payload}
+      case "SET_END_DATE" : return {...state,endDate:action.payload}
+      case "SET_STATUS" : return {...state,status: action.payload}
+      case "SET_SORT" : return {...state, sortBy : action.payload}
+      case "RESET" : return  initialState
+      default : return state
+    }
+  }
+
+    const [state, dispatch] = useReducer(filterReducer, initialState);
+
+  
+
+
+
+  const filteredOrder = useMemo(() => {
+    
+    let result = [...dummyOrderdata];
+    if (state.search.trim()) {
+  const query = state.search.toLowerCase();
+  let temp = [];
+  result.forEach(element => {
+    for (let key in element) {
+      if (typeof element[key] === 'string' && element[key].toLowerCase().includes(query)) {
+        temp.push(element);
+        break;
+      }
+    }
+  });
+  result = temp;
+}
+
+
+
+ if (state.startDate) {
+    result = result.filter(o => new Date(o.orderDate) >= new Date(state.startDate));
+  }
+  if (state.endDate) {
+    result = result.filter(o => new Date(o.orderDate) <= new Date(state.endDate));
+  }
+
+  if (state.status) {
+    result = result.filter(o => o.status === state.status);
+  }
+
+   if (state.sortBy === 'price-asc') {
+    result.sort((a, b) => a.price - b.price);
+  } else if (state.sortBy === 'price-desc') {
+    result.sort((a, b) => b.price - a.price);
+  }
+
+  return result;
+
+  },[state.search ,state.startDate, state.endDate, state.status, state.sortBy]);
+
+
+
+
+
 
 
 
@@ -87,7 +132,7 @@ const Order = () => {
       {/* Filter Bar */}
       <div className='bg-white rounded-xl border border-gray-200 p-3 mb-4'>
         <Filter
-         filterState  = {filterState}
+         filterState  = {state}
          dispatch  = {dispatch}
         />
       </div>
@@ -95,10 +140,10 @@ const Order = () => {
       {/* Summary Cards */}
       <div className='grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5'>
         {[
-          { label: 'Total Orders', value: dummyOrderdata.length, color: 'text-gray-800' },
-          { label: 'Delivered', value: dummyOrderdata.filter(o => o.status === 'Delivered').length, color: 'text-green-600' },
-          { label: 'Pending', value: dummyOrderdata.filter(o => ['Shipped', 'Processing'].includes(o.status)).length, color: 'text-yellow-600' },
-          { label: 'Cancelled', value: dummyOrderdata.filter(o => o.status === 'Cancelled').length, color: 'text-red-500' },
+          { label: 'Total Orders', value: filteredOrder.length, color: 'text-gray-800' },
+          { label: 'Delivered', value: filteredOrder.filter(o => o.status === 'Delivered').length, color: 'text-green-600' },
+          { label: 'Pending', value: filteredOrder.filter(o => ['Shipped', 'Processing'].includes(o.status)).length, color: 'text-yellow-600' },
+          { label: 'Cancelled', value: filteredOrder.filter(o => o.status === 'Cancelled').length, color: 'text-red-500' },
         ].map((card) => (
           <div key={card.label} className='bg-white rounded-xl border border-gray-200 px-4 py-3'>
             <p className='text-xs text-gray-400 mb-1'>{card.label}</p>
@@ -126,7 +171,7 @@ const Order = () => {
             </thead>
 
             <tbody className='divide-y divide-gray-100'>
-              {dummyOrderdata.map((item, index) => (
+              {filteredOrder.map((item, index) => (
                 <tr key={item.orderId} className='hover:bg-gray-50 transition-colors duration-150'>
                   <td className='px-4 py-3 text-xs font-semibold text-gray-500'>{item.orderId}</td>
                   <td className='px-4 py-3 text-xs font-medium text-gray-500'>{item.customerName}</td>

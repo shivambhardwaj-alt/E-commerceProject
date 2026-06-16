@@ -18,6 +18,7 @@ import more from './more.png';
 import settings from './setting.png';
 import analytics from './data-analytics.png';
 import offer from './offer.png';
+import plus from './plus (1).png'
 
 const assets = {
     google,
@@ -40,6 +41,7 @@ const assets = {
     settings,
     analytics,
     offer,
+    plus,
 
 
 }
@@ -377,4 +379,92 @@ const customers = [
   }
 ];
 
-export {assets,customers}
+
+export const products = [
+  {
+    id: 1,
+    name: "Nike Air Max Pulse",
+    brand: "Nike",
+    sku: "NK-AM-001",
+    category: "Shoes",
+    price: 12999,
+    discountPrice: 10999,
+    stock: 24,
+    status: "Active",
+    featured: true,
+    rating: 4.6,
+    image: "https://via.placeholder.com/150",
+    description: "Comfortable running shoes for daily wear.",
+    tags: ["running", "sports", "new"],
+    createdAt: "2026-06-01"
+  },
+  {
+    id: 2,
+    name: "Apple iPhone 15",
+    brand: "Apple",
+    sku: "APL-IP15-128",
+    category: "Mobiles",
+    price: 79999,
+    discountPrice: 74999,
+    stock: 10,
+    status: "Active",
+    featured: true,
+    rating: 4.8,
+    image: "https://via.placeholder.com/150",
+    description: "Latest iPhone with powerful camera and A16 chip.",
+    tags: ["mobile", "electronics", "premium"],
+    createdAt: "2026-05-28"
+  },
+  {
+    id: 3,
+    name: "Samsung Galaxy Watch 6",
+    brand: "Samsung",
+    sku: "SMS-GW6-44",
+    category: "Wearables",
+    price: 24999,
+    discountPrice: 21999,
+    stock: 18,
+    status: "Active",
+    featured: false,
+    rating: 4.4,
+    image: "https://via.placeholder.com/150",
+    description: "Smartwatch with health tracking and long battery life.",
+    tags: ["watch", "smartwatch", "fitness"],
+    createdAt: "2026-05-20"
+  },
+  {
+    id: 4,
+    name: "HP Pavilion Laptop",
+    brand: "HP",
+    sku: "HP-PV-16",
+    category: "Laptops",
+    price: 65999,
+    discountPrice: 61999,
+    stock: 7,
+    status: "Low Stock",
+    featured: false,
+    rating: 4.3,
+    image: "https://via.placeholder.com/150",
+    description: "Everyday laptop for work, study, and entertainment.",
+    tags: ["laptop", "office", "student"],
+    createdAt: "2026-05-15"
+  },
+  {
+    id: 5,
+    name: "Boat Rockerz 550",
+    brand: "Boat",
+    sku: "BT-RZ-550",
+    category: "Headphones",
+    price: 3999,
+    discountPrice: 2999,
+    stock: 48,
+    status: "Active",
+    featured: false,
+    rating: 4.2,
+    image: "https://via.placeholder.com/150",
+    description: "Wireless over-ear headphones with deep bass.",
+    tags: ["audio", "wireless", "bass"],
+    createdAt: "2026-06-05"
+  }
+]
+export {assets,customers }

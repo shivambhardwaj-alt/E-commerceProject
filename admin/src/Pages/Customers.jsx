@@ -8,7 +8,7 @@ const Customers = () => {
   const [userPreview, setUserPreview] = useState(false);
   const [userPreviewData, setUserPreviewData] = useState({});
   const[filteredData,setFiltereData] = useState([]);
-  const [loading,setLoading] = useState(true) ;
+  const [loading,setLoading] = useState(false) ;
 
 
   // ==========================================================
