@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { ShopContext } from '../context/ShopContext';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 
 
 const Login = () => {
@@ -15,6 +16,8 @@ const Login = () => {
   const [currentState, setCurrentState] = useState('Sign Up');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+ 
+  const[googleData,setGoogleData] = useState();
   const navigate = useNavigate();
 
   // ====================== HERE ON SUBMIT HANDLE FORM SUBMISSION ======================
@@ -74,6 +77,47 @@ const Login = () => {
     }
   };
 
+
+
+
+
+
+  const googleLogin =  useGoogleLogin({
+    onSuccess : async(tokenResponse) => {
+
+      try{
+      const access_token = tokenResponse.access_token;
+      const tempGoogleData = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo" , {
+        headers : {
+          Authorization : `Bearer ${access_token}`,
+        }
+      })
+  
+      setLoading(true);
+      console.log(tempGoogleData);
+      // ================= Now sending information to the  backend here
+      const payload = tempGoogleData.data ;
+      setGoogleData(tempGoogleData.data);
+      const {data} = await axios.post(backendUrl+"/api/user/google-Auth",payload);
+      if(data.success){
+        toast.success("Login Successful");
+        navigate('/');
+      }
+
+    }catch(error){
+      toast.error("Login Failed");
+    }finally{
+      setLoading(false);
+    }
+
+      
+
+    },
+    onError : () =>{
+      toast.error("Login Failed");
+    }
+
+  })
 
 
 
@@ -182,12 +226,12 @@ const Login = () => {
 
           {/* Social Login */}
           <div className='grid grid-cols-2 gap-3 pt-4'>
-            <button className='flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl text-gray-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]'>
+            <button onClick={() => googleLogin()} className='flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl text-gray-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]'>
               <svg className='w-5 h-5' viewBox="0 0 24 24" fill="currentColor">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
               </svg>
               Google
-            </button>
+            </button >
             <button className='flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl text-gray-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]'>
               <svg className='w-5 h-5' viewBox="0 0 24 24" fill="currentColor">
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231z" />

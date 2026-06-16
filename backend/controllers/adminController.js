@@ -8,27 +8,27 @@ import uploadImagesToCloudinary from '../services/uploadImages.js';
 
 
 
-const loginAdmin = (req, res) => {
-    try {
-        const { email, password } = req.body;
-        logger.info("Admin Login Attempt");
-        if (!email || !password) {
-            logger.warn("Invalid Credentials");
-            return res.status(400).json({ success: false, message: "Invalid Credentials" });
+
+const loginAdmin = async(req,res) => {
+    try{
+
+        const {email , password}  = req.body;
+        if(!email || !password){
+            logger.error("Error happened in Admin login");
+            return res.status(400).json({success : false, message : "Bad Credentials"});
+        
         }
-        if (email !== process.env.ADMIN_GMAIL || password !== process.env.ADMIN_PASSWORD) {
-            logger.warn("Invalid Admin Credentials");
-            return res.status(400).json({ success: false, message: "Invalid Admin Credentials" });
+        if(process.env.ADMIN_EMAIL === email && process.env.ADMIN_PASSWORD === password){
+            const token = jwt.sign({email : email , role : "admin"} , process.env.JWT_SECRET, {expiresIn : "1h" ,issuer : "winterx",audience : "admin", algorithm :"HS256"});
+            return res.status(200).json({success : true , adminToken : token});
+        }else{
+            logger.error("Mismatch between the credentials provided by admin and system");
+            return res.status(400).json({success : false, message:"Bad Credentials"});
         }
-        const adminToken = jwt.sign({ admin_email: process.env.ADMIN_EMAIL, role: "admin" }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        logger.info("Token assigned to the Admin");
-        return res.status(200).json({ success: true, adminToken: adminToken });
 
-    } catch (error) {
-
-        logger.error("Internal Error", error);
-        res.status(500).json({ success: false, message: "Internal Error" });
-
+    }catch(error){
+        logger.warn("Information Provided by admin is Incorrect");
+        return res.status(400).json({success : false, message : "Bad Credentials"});
     }
 }
 
@@ -65,7 +65,7 @@ const addProduct = async (req, res) => {
 
         const product = {
             name: dataForDatabase.name,
-            slug: dataForDatabase.slug,
+            slug: generateSlug(dataForDatabase.name),
             brand: dataForDatabase.brand,
             description: {
                 short: dataForDatabase.description.short,
@@ -89,7 +89,7 @@ const addProduct = async (req, res) => {
             category: dataForDatabase.category,
             subCategory: dataForDatabase.subCategory,
             productType: dataForDatabase.productType,
-            //  images added to be here 
+             
             images: imageUrls,
             collection: dataForDatabase.collection,
 
@@ -153,12 +153,25 @@ const addProduct = async (req, res) => {
             isDeleted: dataForDatabase.isDeleted,
 
         }
-        
+
         logger.info("Product formed to save into the Database");
         const ProductToBeAdded = new productModel(product);
 
-        const savedProduct = await ProductToBeAdded.save();
-        logger.info(`Product saved successfully: ${savedProduct._id}`);
+        try {
+            const savedProduct = await ProductToBeAdded.save();
+            logger.info(`Product saved successfully: ${savedProduct._id}`);
+            return res.status(201).json({
+                success: true,
+                message: "Product added successfully",
+                product: savedProduct,
+            });
+        } catch (err) {
+            if (err.name === 'ValidationError') {
+                logger.error("Validation failed!", err.message);
+                return res.status(400).json({ success: false, message: err.message });
+            }
+            throw err;
+        }
 
         return res.status(201).json({
             success: true,
@@ -166,8 +179,13 @@ const addProduct = async (req, res) => {
             product: savedProduct,
         });
     } catch (error) {
-        logger.error("Error happened in adding product file => AdminController Function => addProduct");
-        return res.status(500).json({ success: false, message: "Bad Request", error: error.message });
+        console.log("FULL ERROR:", error);
+        logger.error("Error happened in adding product file => AdminController Function => addProduct", error);
+        return res.status(500).json({
+            success: false,
+            message: "Bad Request",
+            error: error.message || JSON.stringify(error)
+        });
     }
 };
 

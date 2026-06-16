@@ -13,7 +13,7 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState(new Map());
   const navigate = useNavigate()
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
+  const googleClientId = import.meta.env.VITE_CLIENT_ID;
   const [wishList,setWishList] = useState(new Map());
   const [verificationToken,setVerificationToken] = useState(null);
 
@@ -106,6 +106,7 @@ const isInWishlist = (item_id) => {
     getCartCount,
     setWishList,
     addToWishList,
+    googleClientId,
     
     navigate,
     backendUrl,

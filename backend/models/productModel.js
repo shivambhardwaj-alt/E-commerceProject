@@ -51,7 +51,7 @@
       fit: { type: String, default: 'Regular fit' }, 
       neckline: { type: String,  },
       sleeve: { type: String },
-      fabricWeight: { type: String, default: 250 }, 
+      fabricWeight: { type: String, default: "250" }, 
       stretchable: { type: Boolean, default: false },
     },
     winterSpecs: {

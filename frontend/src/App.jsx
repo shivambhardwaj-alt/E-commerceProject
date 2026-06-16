@@ -25,6 +25,7 @@ import BestOffers from './Pages/BestOffers';
 import Sale from './Pages/Sale';
 import WishList from './Pages/WishList';
 import MyProfile from './Pages/MyProfile';
+import ResetPassword from './Pages/ResetPassword';
 const App = () => {
   return (
     <div  className='px-4 sm:px[5vw] md:px -[2vw] lg:px-[1vw]'>
@@ -35,7 +36,7 @@ const App = () => {
       <Navbar />
       <SearchBar />
       <Routes>
-
+        <Route path = '/reset-password/:token' element = {<ResetPassword />}/>
         <Route  path='/login' element = {<Login />} />
         <Route  path='/' element = {<Home />} />
         <Route  path='/contact' element = {<Contact />} />

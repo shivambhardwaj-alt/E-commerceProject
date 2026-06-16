@@ -30,7 +30,7 @@ const preferencesSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   role: { 
     type: String, 
-    enum: ['customer', 'admin', 'seller'], 
+    enum: ['customer', 'admin', ], 
     default: 'customer',
     index: true 
   },
@@ -44,7 +44,8 @@ const userSchema = new mongoose.Schema({
     },
     phone: { type: String, match: [/^\+?[1-9]\d{9,14}$/] }, 
 
-    isVerified: { type: Boolean, default: false }
+    isVerified: { type: Boolean, default: false },
+    
   },
   addresses: [addressSchema],
   preferences: preferencesSchema,
@@ -52,11 +53,17 @@ const userSchema = new mongoose.Schema({
     balance: { type: Number, default: 0, min: 0 },
     loyaltyPoints: { type: Number, default: 0, min: 0 }
   },
-  password: { type: String, required: true } ,
+  authProvider : {
+    type : String, 
+    enum : ['google', 'local'],
+    default : 'local'
+  },
+  password: { type: String, select : false } ,
   isDeleted : {type:Boolean, default : false},
   otp : {type : String},
   otp_expiry : {type : Date},
   verificationToken : {type:String},
+ 
 
 
 }, {

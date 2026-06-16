@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import UserModel from '../models/UserModel.js'; 
+import UserModel from '../models/UserModel.js';
 import mongoose from 'mongoose';
-import {generateOtp,sendMailOtp,generateVerificationToken} from '../services/otpgenerator.js';
-import {transporter,testConnection} from '../config/nodemailer.js';
+import { generateOtp, sendMailOtp, generateVerificationToken ,sendMailResetLink } from '../services/otpgenerator.js';
+import { transporter, testConnection } from '../config/nodemailer.js';
 import logger from '../utils/logger.js';
 import { compareOtp } from '../utils/allCompare.js';
 
@@ -12,22 +12,22 @@ import { compareOtp } from '../utils/allCompare.js';
 
 // ============================== API TO REGISTER USER ==============================
 
- const registerUser = async (req, res) => {
+const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const cleanEmail = email.toLowerCase();
-    logger.debug('Register attempt for email  =  %s',cleanEmail);
+    logger.debug('Register attempt for email  =  %s', cleanEmail);
     const existing = await UserModel.findOne({ 'personalInfo.email': cleanEmail });
     if (existing) {
-      logger.warn('Registration blocked - user already defined %s',cleanEmail);
+      logger.warn('Registration blocked - user already defined %s', cleanEmail);
       return res.status(409).json({ success: false, message: 'User already exists' });
     }
 
     const numericalOtp = generateOtp();
     const otp = await bcrypt.hash(numericalOtp, 10);
 
-    
-    
+
+
     const verificationToken = generateVerificationToken();
     const otp_expiry = new Date(Date.now() + 10 * 60 * 1000);
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -48,16 +48,16 @@ import { compareOtp } from '../utils/allCompare.js';
       otp_expiry,
       verificationToken
     });
-    logger.info("User registered successfully %s",cleanEmail);
+    logger.info("User registered successfully %s", cleanEmail);
 
-    
+
     await sendMailOtp(cleanEmail, numericalOtp);
-    logger.info("OTP send to the email %s",cleanEmail);
+    logger.info("OTP send to the email %s", cleanEmail);
 
     return res.status(201).json({
       success: true,
       message: 'Registration successful. Check email for OTP',
-      verificationToken : verificationToken
+      verificationToken: verificationToken
     });
 
   } catch (error) {
@@ -76,38 +76,38 @@ import { compareOtp } from '../utils/allCompare.js';
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    logger.info("Attempt to login  %s",email);
+    logger.info("Attempt to login  %s", email);
     const cleanEmail = email.toLowerCase();
     const user = await UserModel.findOne({
       'personalInfo.email': cleanEmail,
       isDeleted: false
     }).select('+password +personalInfo.isVerified');
     if (!user) {
-      logger.warn("User not Found %s",cleanEmail);
+      logger.warn("User not Found %s", cleanEmail);
       return res.status(404).json({ success: false, message: 'User not found' });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      logger.warn("Login Failed .Incorrect Password %s",cleanEmail);
+      logger.warn("Login Failed .Incorrect Password %s", cleanEmail);
       return res.status(400).json({ success: false, message: 'Incorrect password' });
     }
 
     if (!user.personalInfo.isVerified) {
-      logger.warn('Login blocked user not verified %s',cleanEmail);
+      logger.warn('Login blocked user not verified %s', cleanEmail);
 
-        // =================== HERE SEND HIM THE VERIFICATION TOKEN AND REDIRECT HIM TO THE OTP PAGE
+      // =================== HERE SEND HIM THE VERIFICATION TOKEN AND REDIRECT HIM TO THE OTP PAGE
 
-        const otp = generateOtp();
-        const verificationToken = generateVerificationToken();
-        
-        await sendMailOtp(email,otp);
-        logger.info("Send him the mail for  the otp %s",cleanEmail);
+      const otp = generateOtp();
+      const verificationToken = generateVerificationToken();
+
+      await sendMailOtp(email, otp);
+      logger.info("Send him the mail for  the otp %s", cleanEmail);
 
 
       return res.status(403).json({
         success: false,
         message: 'Account not verified',
-        alert_data : 'Please check your email for otp',
+        alert_data: 'Please check your email for otp',
         next_step: 'otp-verification'
       });
     }
@@ -121,10 +121,10 @@ const loginUser = async (req, res) => {
 
     logger.info('User logged in successfully: %s', cleanEmail);
 
-    return res.json({ success: true, userToken});
+    return res.json({ success: true, userToken });
 
   } catch (error) {
-     logger.error('Login error for email=%s — %s', req.body?.email, error.message);
+    logger.error('Login error for email=%s — %s', req.body?.email, error.message);
     return res.status(500).json({ success: false, message: 'Login failed' });
   }
 };
@@ -135,27 +135,27 @@ const loginUser = async (req, res) => {
 // ========================== API TO HANDLE THE OTP ===================================
 
 
-const otpHandler = async(req,res) => {
-  try{
-    const {otp,verificationToken} = req.body;
-    
-    logger.info("Otp verification attempt token  = %s",verificationToken);
+const otpHandler = async (req, res) => {
+  try {
+    const { otp, verificationToken } = req.body;
+
+    logger.info("Otp verification attempt token  = %s", verificationToken);
 
     //do it here step by  step 
-    const user = await UserModel.findOne({verificationToken : verificationToken});
-    
-    if(!user){
+    const user = await UserModel.findOne({ verificationToken: verificationToken });
+
+    if (!user) {
       logger.warn('OTP verification failed — invalid or expired token=%s', verificationToken);
-      return res.status(404).json({success:false,message:"User Not Found"});
+      return res.status(404).json({ success: false, message: "User Not Found" });
     }
-    if(user.otp_expiry <= new Date()){
+    if (user.otp_expiry <= new Date()) {
       logger.warn("OTP timelimit Expired!");
-      return res.status(403).json({success : false,message: "otp-expired"});
+      return res.status(403).json({ success: false, message: "otp-expired" });
     }
-    const comparisonResult =  await compareOtp(otp,user.otp);
-    if(!comparisonResult){
+    const comparisonResult = await compareOtp(otp, user.otp);
+    if (!comparisonResult) {
       logger.info("Wrong Otp filled");
-      return res.status(401).json({success : false, message : "Please fill otp correctly" });
+      return res.status(401).json({ success: false, message: "Please fill otp correctly" });
     }
     user.personalInfo.isVerified = true;
     user.otp = null;
@@ -164,31 +164,19 @@ const otpHandler = async(req,res) => {
     await user.save();
     logger.info('User verified successfully: %s', user.personalInfo.email);
     // now give him jwt token 
-    const userToken = jwt.sign({id:user._id,email:user.personalInfo.email},process.env.JWT_SECRET,{expiresIn:'15m'});
-    res.status(200).json({success:true,userToken : userToken});
+    const userToken = jwt.sign({ id: user._id, email: user.personalInfo.email }, process.env.JWT_SECRET, { expiresIn: '15m' });
+    res.status(200).json({ success: true, userToken: userToken });
     logger.info("Message after verifying user has been send !");
 
-  }catch(error){
+  } catch (error) {
     logger.error('OTP verification error — %s', error.message);
-    res.status(500).json({success:false,message:'Internal Error'});
+    res.status(500).json({ success: false, message: 'Internal Error' });
 
   }
 }
 
 
-//====================== RESEND OTP HANDLER =========================================
 
-
-const resendOTPHandler = async(req, res) => {
-  try{
-    console.log(req.verificationToken);
-
-
-  }catch(error){
-    logger.error("Function broke of resendOTPHandler");
-    return res.status(500).json({success : false, messagae : "Internal Error"});
-  }
-}
 
 
 
@@ -214,27 +202,27 @@ const resendOtpToTheUser = async (req, res) => {
       return res.status(400).json({ success: false, message: "Verification token is required" });
     }
 
-    const userData = await UserModel.findOne({ verificationToken : verificationToken  });
+    const userData = await UserModel.findOne({ verificationToken: verificationToken });
 
     if (!userData) {
       logger.warn("Resend OTP failed — invalid token");
       return res.status(403).json({ success: false, message: "Invalid or expired token" });
     }
 
-    
+
 
     const numericalotp = generateOtp();
-    const otp = await bcrypt.hash(numericalotp,10);
+    const otp = await bcrypt.hash(numericalotp, 10);
     userData.otp = otp;
 
     userData.otp_expiry = new Date(Date.now() + 10 * 60 * 1000);
-    await userData.save(); 
+    await userData.save();
     await sendMailOtp(userData.personalInfo.email, numericalotp);
     logger.info("OTP resent successfully to %s", userData.personalInfo.email);
     return res.status(200).json({
       success: true,
       message: "OTP resent successfully",
-      
+
     });
 
   } catch (error) {
@@ -246,6 +234,98 @@ const resendOtpToTheUser = async (req, res) => {
 
 
 
+const loginUserViaGoogle = async (req, res) => {
+  try {
+    logger.info("Login Attempt Request Generated here in via Oauth");
+    const data = req.body;
+    const newDocumentToSave = {
+      personalInfo: {
+        name: data.name,
+        email: data.email,
+        isVerified: true,
+        sub: data.sub,
+      },
+      authProvider: "google",
+    }
+    logger.info("Document formed to save into the database for login via Oauth");
+    const documentToSave = new UserModel(newDocumentToSave);
+    const checkfind = await UserModel.findOne({$or : [{"googleId" : data.sub } , {"personalInfo.email" : email}]});
+    console.log(checkfind);
+    if (!checkfind) {
+      logger.info("Adding new user into the database");
+      try {
+        const result = await documentToSave.save();
+        if (result) {
+          logging.info("Document Saved of the user via Oauth");
+          const token = jwt.sign({ userId: result._id, email: result.personalInfo.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '15m' });
+          return res.status(200).json({success : true ,message : "Registration Successful" , userToken : token});
+
+        } else {
+          logger.error("Failed to Save the Document");
+          return res.status(400).json({ success: false, message: "Registration Failed" });
+        }
+      } catch (error) {
+        logger.info("Registration of the user failed via Oauth");
+        return res.stats(400).json({ success: false, message: "Login Failed" });
+      }
+    }else{
+      try{ 
+        logging.info("User Exists via Oauth and trying to Login");
+      const _id = checkfind._id;
+      const email = checkfind.personalInfo.email ;
+      const token = jwt.sign({userId : result._id,email : result.personalInfo.email} , process.env.JWT_SECRET,{expiresIn : '15m'});
+      return res.status(200).json({success : true, message : "Login Successful", userToken : token});
+      }catch(error){
+        logger.error("login Failed via Oauth");
+        return res.status(400).json({success : false, message : "Login Failed"});
+      }
+    }
+  } catch (error) {
+    logger.error("Failed in login with google attempt for request");
+    return res.status(400).json({ success: false, message: "Login failed" });
+  }
+}
 
 
-export {registerUser,loginUser,otpHandler,resendOtpToTheUser}
+// ================== API for the handling of resetting of passsword ========================
+
+
+const handleResetPassword = async(req,res) => {
+  logger.info("Request generated here for resetting password");
+  try{
+    const {email , phone} = req.body;
+    console.log()
+    if(email){
+      const user = await UserModel.findOne({$or: [
+        {"personalInfo.email" : email},
+        {"personalInfo.phone" : phone}
+      ]});
+      if(!user){
+        logger.info("User not found in the database");
+        return res.status(404).json({success : false, message : "User Not Found"});
+      }
+      
+      const token = generateVerificationToken();
+      await sendMailResetLink(email , token);
+      logger.info("Mail sent successfully");
+
+      return res.status(200).json({success : true, token: token});
+
+    }else if(phone){
+        return res.status(503).json({success : false , message : "Service Unavailable , Please try email"});
+    }else{
+      return res.status(404).json({success : false , message : "No user Exists"});
+    }
+
+  }catch(error){
+    return res.status(500).json({success : false, message : "Internal Error"});
+  }
+}
+
+
+
+
+
+export { registerUser, loginUser, otpHandler, resendOtpToTheUser, loginUserViaGoogle ,handleResetPassword };
