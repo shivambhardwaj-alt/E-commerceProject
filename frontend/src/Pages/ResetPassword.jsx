@@ -20,7 +20,7 @@ const ResetPassword = () => {
   const {state,dispatch} = useReducer(reducer,initialState);
   return (
     <div className=''>
-      label
+      resetPassword
 
 
 
