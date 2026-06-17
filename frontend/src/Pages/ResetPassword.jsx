@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react'
 
-const ResetPassword = () => {
-  
+const ResetPassword = () => { 
+  // change this  thing here 
     function reducer(state,action){
       switch(action.type){
         case "PASSWORD":
