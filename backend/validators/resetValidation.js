@@ -16,9 +16,9 @@ const createEmailValidation = [
 
 const resetEmailValidation = (req,res,next) => {
     const errors = validationResult(req);
+    console.log(errors);
     if(!errors.isEmpty()){
         logger.error("Validation of request failed of reseting Password");
-        console.log(errors);
         return res.status(400).json({
         success: false,
         errors: errors.array().map(err => ({

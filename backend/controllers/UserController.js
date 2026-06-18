@@ -175,19 +175,6 @@ const otpHandler = async (req, res) => {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ================================= API TO HANDLE THE RESEND OF THE OTP ========================
 
 // don't forget to limit count of resend otp
@@ -309,9 +296,18 @@ const handleResetPassword = async(req,res) => {
       
       const token = generateVerificationToken();
       await sendMailResetLink(email , token);
-      logger.info("Mail sent successfully");
-
-      return res.status(200).json({success : true, token: token});
+      
+      
+      // token expiry is need here so don't forget that
+      try{
+        const _id = await UserModel.updateOne({_id : user._id} , {$set : { reset_token : token }});
+        logger.info("token given and user saved successfully with token :")
+        logger.info("Mail sent successfully");
+        return res.status(200).json({success : true, token: token});
+      }catch(error){
+        logger.info("failed in saving into the  database");
+        throw new error;
+      }
 
     }else if(phone){
         return res.status(503).json({success : false , message : "Service Unavailable , Please try email"});
@@ -324,8 +320,55 @@ const handleResetPassword = async(req,res) => {
   }
 }
 
+// ========================== API TO HANDLE CHANGING OF THE PASSWORD===============================
+const ResetPasswordOfTheUser = async(req,res) => {
+  logger.info("Request Generate here for the resetting of the password here ");
+
+  try{
+    
+    const {password, confirmPassword, token} = req.body;
+    if(password !== confirmPassword){
+      logger.error("Password doesn't matched of the user here failed");
+      return res.status(400).json({success : false, message : "Password doesn't matched"})
+    }
+    const user = await UserModel.findOne({"reset_token" : token});
+    if(!user){
+      logger.info("User not found in the database");
+      return res.status(404).json({success : false, message : "User Not found"});
+    }
+    // now change the password of the user here
+    const newPasswordhash = await bcrypt.hash(password,10);
+      logger.info("Saving the user after update");
+     try{
+      user.password = newPasswordhash;
+      user.reset_token = null;
+
+      const newUser = await user.save();
+      if(!newUser){
+        logger.info("Saving of the user failed");
+        throw new Error("Something went wrong with saving of user in ResetPasswordOftheuser");
+      }else{
+        const userToken = jwt.sign({userId:newUser._id ,email : newUser.personalInfo.email} , process.env.JWT_SECRET , {expiresIn:"15m"});
+        logger.info("jwt token has been assigned to the user"); 
+        return res.status(200).json({success : true , message : "Password changed Successfully" , token : userToken});
+      }
+    }catch(error){
+      logger.info("Error happened in saving of the user for changing password here");
+      throw new Error("Something went wrrong with saving of user in ResetPasswordoftheuser");
+    }
+
+
+
+  }catch(error){
+    console.log(error);
+    logger.info("Error happened here ");
+    return res.status(500).json({success :false, message : "Internal Error"});
+
+  }
+
+}
 
 
 
 
-export { registerUser, loginUser, otpHandler, resendOtpToTheUser, loginUserViaGoogle ,handleResetPassword };
+export { registerUser, loginUser, otpHandler, resendOtpToTheUser, loginUserViaGoogle ,handleResetPassword,ResetPasswordOfTheUser };

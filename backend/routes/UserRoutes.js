@@ -1,9 +1,10 @@
 import express from 'express';
 import { validateErrors, validateUserLogin, validateUserRegistration } from '../validators/userValidator.js';
-import { handleResetPassword, loginUser, loginUserViaGoogle, otpHandler, registerUser, resendOtpToTheUser } from '../controllers/UserController.js';
+import { handleResetPassword, loginUser, loginUserViaGoogle, otpHandler, registerUser, resendOtpToTheUser ,ResetPasswordOfTheUser } from '../controllers/UserController.js';
 import { otpValidation, otpValidator } from '../validators/otpValidator.js';
 import { verificationTokenValidator,verificationTokenValidation } from '../validators/verificationToken.js';
 import { createEmailValidation,resetEmailValidation } from '../validators/resetValidation.js';
+import { createResetPasswordValidation, doResetValidation } from '../validators/resetPasswordValidation.js';
 const userRouter = express.Router();
 
 userRouter.post('/login',validateUserLogin,validateErrors,loginUser);
@@ -12,6 +13,7 @@ userRouter.post('/otp',otpValidation,otpValidator,verificationTokenValidation,ve
 userRouter.post('/resend-otp',verificationTokenValidation,verificationTokenValidator,resendOtpToTheUser);
 userRouter.post('/google-Auth',loginUserViaGoogle);
 userRouter.post('/reset-password',createEmailValidation,resetEmailValidation,  handleResetPassword);
+userRouter.post('/resetting-password',createResetPasswordValidation,doResetValidation,ResetPasswordOfTheUser);
 
 
 

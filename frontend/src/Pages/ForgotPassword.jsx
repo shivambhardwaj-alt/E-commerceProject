@@ -84,7 +84,7 @@ const ForgotPassword = () => {
             className={`w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold py-4 px-6 rounded-xl text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${loading ? "opacity-90" : ""}`}
             disabled={!email && !phone || loading}
           >
-            {loading && <span className="animate-spin h-5 w-5 mr-3 inline-block mr-2">⚙</span>}
+            {loading && <span className="animate-spin h-5 w-5  inline-block mr-2">⚙</span>}
             {loading ? "Sending..." : "Send Reset Link"}
           </button>
 
