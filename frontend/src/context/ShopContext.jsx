@@ -32,7 +32,6 @@ const [userToken, setUserToken] = useState(() => localStorage.getItem('userToken
       toast.warn("Product already Exists");
     }
     newMap.set(item._id,item);
-    toast.success('Product Added Successfully !');
     return newMap;
 
     

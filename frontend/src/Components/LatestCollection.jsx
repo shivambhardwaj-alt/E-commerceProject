@@ -4,22 +4,26 @@ import { products, winterProducts } from '../assets/assets';
 import Title from './Title';
 import ProductItem from './ProductItem';
 import { assets } from '../assets/assets';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const LatestCollection = () => {
   const [latestProducts, setLatestProducts] = useState([]);
   const {addToWishList,addToCart} = useContext(ShopContext);
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     setLatestProducts(winterProducts.reverse().slice(0, 4));
+
   }, []);
 
   return (
     <div className='my-20'>
-      {/* Hero Section - UNCHANGED */}
+     
       <div className='my-12 py-12 bg-gradient-to-b from-slate-50 to-white'>
         <div className='max-w-6xl mx-auto px-6'>
           <div className='flex flex-col lg:flex-row items-center gap-12 lg:gap-20'>
-            {/* Left - Two Images Stack */}
+         
             <div className='flex flex-col sm:flex-row items-center gap-6 lg:gap-8 flex-shrink-0'>
               <img 
                 src={assets.Latest1} 
@@ -59,7 +63,7 @@ const LatestCollection = () => {
 
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8'>
           {latestProducts.map((product, index) => (
-            <div key={product._id || index} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+            <div key={product._id || index} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 border border-gray-100 cursor-pointer" onClick={(e) => navigate(`/product/${product._id}`)}>
               {/* Product Image */}
               <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50 p-4">
                 <img 
@@ -69,8 +73,8 @@ const LatestCollection = () => {
                 />
                 <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
                   <div className="flex flex-col gap-2 bg-white/90 backdrop-blur-sm p-2 rounded-xl shadow-lg">
-                    <img src={assets.heart_icon} alt="Wishlist" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => addToWishList(product)} />
-                    <img src={assets.cart2} alt="Add to cart" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => addToCart(product._id)} />
+                    <img src={assets.heart_icon} alt="Wishlist" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => {addToWishList(product) ;toast.success("Added to wishlist") }} />
+                    <img src={assets.cart2} alt="Add to cart" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => {addToCart(product._id) ; toast.success("Added to cart") }} />
                   </div>
                 </div>
               </div>

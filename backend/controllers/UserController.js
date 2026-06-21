@@ -229,21 +229,21 @@ const loginUserViaGoogle = async (req, res) => {
       personalInfo: {
         name: data.name,
         email: data.email,
-        isVerified: true,
         sub: data.sub,
       },
       authProvider: "google",
+      googleId : data.sub,
     }
     logger.info("Document formed to save into the database for login via Oauth");
     const documentToSave = new UserModel(newDocumentToSave);
-    const checkfind = await UserModel.findOne({$or : [{"googleId" : data.sub } , {"personalInfo.email" : email}]});
-    console.log(checkfind);
+   
+    const checkfind = await UserModel.findOne({$or : [{"googleId" : data.sub } , {"personalInfo.email" : data.email}]});
     if (!checkfind) {
       logger.info("Adding new user into the database");
       try {
         const result = await documentToSave.save();
         if (result) {
-          logging.info("Document Saved of the user via Oauth");
+          logger.info("Document Saved of the user via Oauth");
           const token = jwt.sign({ userId: result._id, email: result.personalInfo.email },
             process.env.JWT_SECRET,
             { expiresIn: '15m' });
@@ -255,21 +255,24 @@ const loginUserViaGoogle = async (req, res) => {
         }
       } catch (error) {
         logger.info("Registration of the user failed via Oauth");
-        return res.stats(400).json({ success: false, message: "Login Failed" });
+        return res.status(400).json({ success: false, message: "Login Failed" });
       }
     }else{
+      
       try{ 
-        logging.info("User Exists via Oauth and trying to Login");
+      logger.info("User Exists via Oauth and trying to Login");
       const _id = checkfind._id;
       const email = checkfind.personalInfo.email ;
-      const token = jwt.sign({userId : result._id,email : result.personalInfo.email} , process.env.JWT_SECRET,{expiresIn : '15m'});
+      const token = jwt.sign({userId : checkfind._id,email : checkfind.personalInfo.email} , process.env.JWT_SECRET,{expiresIn : '15m'});
+      logger.info("Signed with google and token has been assigned");
       return res.status(200).json({success : true, message : "Login Successful", userToken : token});
       }catch(error){
         logger.error("login Failed via Oauth");
-        return res.status(400).json({success : false, message : "Login Failed"});
+        throw new Error("Failed in login");
       }
     }
   } catch (error) {
+   
     logger.error("Failed in login with google attempt for request");
     return res.status(400).json({ success: false, message: "Login failed" });
   }

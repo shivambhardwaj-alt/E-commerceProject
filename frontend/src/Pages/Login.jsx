@@ -94,16 +94,16 @@ const Login = () => {
       })
   
       setLoading(true);
-      console.log(tempGoogleData);
+      
       // ================= Now sending information to the  backend here
       const payload = tempGoogleData.data ;
       setGoogleData(tempGoogleData.data);
-      const {data} = await axios.post(backendUrl+"/api/user/google-Auth",payload);
+      const  { data  }= await axios.post(backendUrl+"/api/user/google-Auth",payload);
       if(data.success){
+        localStorage.setItem("userToken" , data.userToken);
         toast.success("Login Successful");
         navigate('/');
       }
-
     }catch(error){
       toast.error("Login Failed");
     }finally{

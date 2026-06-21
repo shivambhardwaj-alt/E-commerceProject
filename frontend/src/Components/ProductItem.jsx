@@ -2,13 +2,14 @@ import React, { useContext, useState, useEffect } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import { Link } from 'react-router-dom'
 import { assets } from '../assets/assets'
+import { toast } from 'react-toastify'
 
 const ProductItem = ({ product }) => {
   const { cartItems, currency, addToCart, addToWishList, wishlist } = useContext(ShopContext)
   const [toggleWishList, setIsInWishlist] = useState(false)
   const [imageIndex, setImageIndex] = useState(0)
 
-  // Safe data extraction with defaults
+ 
   const safeProduct = {
     _id: product?._id || '',
     name: product?.name || 'Product Name',
@@ -43,16 +44,17 @@ const ProductItem = ({ product }) => {
     )
   }
 
-  const handleWishlist = (e) => {
+  const handleWishlist = (e,safeProduct) => {
     e.preventDefault()
     e.stopPropagation()
     addToWishList(safeProduct)
-  }
+    toast.success("Added to wishlist");  }
 
-  const handleCart = (e) => {
+  const handleCart = (e , safeProduct) => {
     e.preventDefault()
     e.stopPropagation()
     addToCart(safeProduct._id, 1)
+    toast.success("Added to cart");
   }
 
   return (
@@ -69,7 +71,7 @@ const ProductItem = ({ product }) => {
           {/* Quick Actions */}
           <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 space-y-2">
             <button
-              onClick={handleWishlist}
+                onClick={(e) => handleWishlist(e, product)}
               className={`w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 ${
                 toggleWishList ? 'text-red-500 bg-red-50' : 'text-gray-600 hover:text-red-500'
               }`}
@@ -78,7 +80,7 @@ const ProductItem = ({ product }) => {
               <img src={assets.heart_icon} alt="Wishlist" className='w-5' />
             </button>
             <button
-              onClick={handleCart}
+                onClick={(e) => handleCart(e, product)}
               className="w-10 h-10 bg-white/90 hover:bg-blue-50 rounded-full flex items-center justify-center shadow-lg text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-all duration-200"
               title="Add to cart"
             >

@@ -3,11 +3,14 @@ import { ShopContext } from '../context/ShopContext';
 import Title from './Title';
 import ProductItem from './ProductItem';
 import { assets, winterProducts } from '../assets/assets';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const BestSeller = () => {
   const [bestSeller, setBestSeller] = useState([]);
   const { addToCart, addToWishList } = useContext(ShopContext);
   
+  const navigte = useNavigate();
   const bestProducts = winterProducts.reverse().filter(product => product.bestseller);
   
   useEffect(() => {
@@ -42,7 +45,7 @@ const BestSeller = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
         {bestSeller.map((product, index) => (
-          <div key={product._id || index} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 border border-gray-100 cursor-pointer">
+          <div key={product._id || index} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 border border-gray-100 cursor-pointer" onClick={() => navigte(`/product/${product._id}`)}>
             {/* Product Image */}
             <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50 p-4">
               <img 
@@ -63,7 +66,8 @@ const BestSeller = () => {
                     className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform p-1 rounded hover:bg-gray-100" 
                     onClick={(e) => {
                       e.stopPropagation();
-                      wishlistHandler(product._id);
+                      addToWishList(product);
+                      toast.success("Added to wishlist")
                     }}
                   />
                   <img 
@@ -72,7 +76,8 @@ const BestSeller = () => {
                     className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform p-1 rounded hover:bg-gray-100" 
                     onClick={(e) => {
                       e.stopPropagation();
-                      cartHandler(product._id);
+                      addToCart(product);
+                      toast.success("Added to cart");
                     }}
                   />
                 </div>
