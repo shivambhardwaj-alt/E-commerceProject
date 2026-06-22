@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import { assets, winterProducts } from '../assets/assets';
-
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 const WishList = () => {
   const { wishList, setWishList, addToWishList, addToCart, removeFromWishlist } = useContext(ShopContext);
   const [products, setProducts] = useState([]);
@@ -20,13 +21,18 @@ const WishList = () => {
     e.stopPropagation();
     e.preventDefault();
     addToCart(productId);
+    toast.success("Added to cart")
   };
 
   const handleRemove = (e, productId) => {
     e.stopPropagation();
     e.preventDefault();
     removeFromWishlist(productId);
+    toast.success("Removed from wishlist")
   };
+
+
+  const navigate = useNavigate();
 
 
   return (
@@ -34,9 +40,6 @@ const WishList = () => {
       <div className="max-w-6xl mx-auto">
         <div className="bg-white border-b border-gray-200 px-6 py-4 mb-6">
           <div className="flex items-center gap-3">
-            <span className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-              <span className="text-xl">❤️</span>
-            </span>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">My Wishlist</h1>
               <p className="text-sm text-gray-500">{products.length} items</p>
@@ -51,7 +54,7 @@ const WishList = () => {
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Your wishlist is empty</h3>
             <p className="text-gray-500 mb-6">Like something to add it to your wishlist</p>
-            <button className="px-6 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-md font-medium">
+            <button className="px-6 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-md font-medium transition-all duration-200 hover:bg-gray-900 hover:scale-105 hover:text-white">
               Continue Shopping
             </button>
           </div>
@@ -106,7 +109,7 @@ const WishList = () => {
                       >
                         Move to Cart
                       </button>
-                      <button className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 bg-white text-sm font-medium rounded-md hover:bg-gray-50 transition-colors">
+                      <button className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 bg-white text-sm font-medium rounded-md hover:bg-gray-50 transition-colors" onClick={() => navigate(`/product/${product._id}`)}>
                         Buy Now
                       </button>
                     </div>

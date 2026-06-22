@@ -27,6 +27,8 @@ import WishList from './Pages/WishList';
 import MyProfile from './Pages/MyProfile';
 import ResetPassword from './Pages/ResetPassword';
 import PersonalInfo from './Components/PersonalInfo';
+import ManageAddress from './Components/ManageAddress';
+import PageNotFound from './Pages/PageNotFound';
 const App = () => {
   return (
     <div className='px-4 sm:px[5vw] md:px -[2vw] lg:px-[1vw]'>
@@ -63,12 +65,14 @@ const App = () => {
         <Route path='shop/sale' element={<Sale />} />
         <Route path='/wishlist' element={<WishList />} />
 
-          <Route path="/profile" element={<MyProfile />}>
-            <Route path="personal-info" element={<PersonalInfo />} />
-          </Route>
-  
+        <Route path="/profile" element={<MyProfile />}>
+          <Route index element={<PersonalInfo />} />
+          <Route path="personal-info" element={<PersonalInfo />} />
+          <Route path="manage-address" element={<ManageAddress />} />
+        </Route>
 
 
+          <Route  path = "*"  element = {<PageNotFound />} />
 
       </Routes>
       <Footer />

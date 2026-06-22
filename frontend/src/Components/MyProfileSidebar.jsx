@@ -44,7 +44,7 @@ const MyProfileSidebar = () => {
                     </div>
                     <div className='flex flex-col justify-center items-start p-1 md:p-2 text-sm md:pl-12 pl-2 gap-1 '>
                         <h1 className='text-gray-600 underline transition-all duration-200  hover:text-gray-900     hover:scale-105 cursor-pointer font-medium' onClick={() => navigate('personal-info')}>Personal Information</h1>
-                        <h1 className='text-gray-600 underline transition-all duration-200  hover:text-gray-900     hover:scale-105 cursor-pointer font-medium'>Manage Address</h1>
+                        <h1 className='text-gray-600 underline transition-all duration-200  hover:text-gray-900     hover:scale-105 cursor-pointer font-medium' onClick={() => navigate('manage-Address')}>Manage Address</h1>
                     </div>
                     <hr className="border-t border-gray-300 w-full my-2" />
                     <div className='flex flex-row items-center justify-center p-1 gap-2 mb-2'>

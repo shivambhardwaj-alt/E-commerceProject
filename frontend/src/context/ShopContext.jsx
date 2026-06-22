@@ -84,8 +84,80 @@ const isInWishlist = (item_id) => {
   }
 
 
+  const   removeFromWishlist =(productId) => {
+
+   
+    const newWishList = new Map(wishList);
+    if(!newWishList){
+      toast.error("try again!");
+    }
+    newWishList.delete(productId);
+    setWishList(newWishList);
+
+  }
+
+//================== REMOVING (Quantity) PRODUCT FROM THE CART ======================================
+
+  const decreaseQuantityFromCart = (productId) => {
+    // console.log("Quantity is Getting decreased here");
+        const newCartMap = new Map(cartItems);
+    let quantity = newCartMap.get(productId);
+    if(quantity ===  1){
+      newCartMap.delete(productId);
+
+    }else{
+      newCartMap.set(productId , quantity - 1);
+    }
+    setCartItems(newCartMap);
+
+  }
+
+  // =================  ADDING PRODUCT INTO THE CART============================
+  const  increaseQuantityInCart = (product) => {
+    const newCartMap = new Map(cartItems);
+    let quantity = newCartMap.get(product._id);
+    console.log(product.quantity);
+    console.log(product);
+    const totalQuantity = product.quantity !== ( undefined || null) ? product.quantity : 10; // make it zero after
+    console.log(totalQuantity);
+    if(quantity + 1 <= totalQuantity){
+
+        newCartMap.set(product._id , quantity + 1);
+        setCartItems(newCartMap);
+    }else{
+      toast.error("product out of Stock");
+    }
+
+  }
+
+  // ==============================REMVOING ENTIRE PRODUCT FROM CART=========================
 
 
+  const removeItemFromCart = (product) => {
+    const newCartMap = new Map(cartItems);
+    const _id = product._id;
+    if(newCartMap.has(_id)){
+      newCartMap.delete(_id);
+      setCartItems(newCartMap);
+
+    }else{
+      toast.error("try Again");
+    }
+  }
+
+
+
+  // ================== MAKE ORDER DETAILS FOR PLACING ORDER ===========================
+
+  const makeOrder = () => {
+
+  // const orderDetails = {};
+  // for(key in ){
+
+  // }
+
+
+  }
 
 
 
@@ -102,6 +174,7 @@ const isInWishlist = (item_id) => {
     verificationToken,
     setVerificationToken,
     addToCart,
+    removeFromWishlist,
     getCartCount,
     setWishList,
     addToWishList,
@@ -118,6 +191,8 @@ const isInWishlist = (item_id) => {
     setCartItems,
     addToCart,
     getCartAmount,
+    increaseQuantityInCart,
+    removeItemFromCart,
 
 
   };

@@ -8,7 +8,7 @@ const MyProfile = () => {
   return (
     <div className='md:flex md:flex-row md:gap-4'>
     <MyProfileSidebar />
-    <div>
+    <div className='min-w-96'>
       <Outlet />
     </div>
 

@@ -4,6 +4,7 @@ import { assets } from '../assets/assets';
 import CartTotal from '../Components/CartTotal';
 import { winterProducts } from '../assets/assets';
 import { useNavigate } from 'react-router-dom';
+import OrderSummaryCard from '../Components/OrderSummaryCard';
 
 /*
   Design notes (so future-you knows the intent):
@@ -19,10 +20,10 @@ import { useNavigate } from 'react-router-dom';
 */
 
 const Cart = () => {
-  const { cartItems, updateQuantity, currency } = useContext(ShopContext);
+  const { cartItems, updateQuantity, currency, decreaseQuantityFromCart, increaseQuantityInCart, removeItemFromCart } = useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
   const navigate = useNavigate();
-
+  // what is this even doing nothing i guess 
   useEffect(() => {
     const array = [];
     for (const [key, value] of cartItems) {
@@ -31,6 +32,10 @@ const Cart = () => {
     }
     setCartData(array);
   }, [cartItems]);
+  const [itemToRemove ,setItemToRemove] = useState(null);
+
+
+  const [openremoveItem, setOpenRemoveItem] = useState(false);
 
   const getPrice = (item) =>
     currency === 'INR' ? `₹${item.pricing.sellingPrice}` : `$${item.pricing.sellingPrice}`;
@@ -43,9 +48,19 @@ const Cart = () => {
 
   const handleIncrease = (item) => updateQuantity(item._id, item.quantity + 1);
   const handleDecrease = (item) => {
-    if (item.quantity > 1) updateQuantity(item._id, item.quantity - 1);
+    console.log(cartData);
+    const result = decreaseQuantityFromCart(item._id);
+    setCartData(result);
+
   };
-  const handleRemove = (item) => updateQuantity(item._id, 0);
+  
+  const handleRemove = () => {
+    
+      removeItemFromCart(itemToRemove);
+      setItemToRemove(null);
+    
+    setOpenRemoveItem(false);
+  };
 
   const steps = [
     { key: 'cart', label: 'Cart', icon: assets.cart2, active: true },
@@ -55,18 +70,17 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen bg-[#F4F7FA] py-10 px-4 sm:px-6 lg:px-8">
-      {/* Progress Trail */}
+
       <div className="max-w-6xl mx-auto mb-10">
         <div className="flex items-center justify-center">
           {steps.map((step, i) => (
             <React.Fragment key={step.key}>
               <div className="flex flex-col items-center">
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                    step.active
+                  className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${step.active
                       ? 'bg-[#101B2D] border-[#101B2D] shadow-lg'
                       : 'bg-white border-slate-200'
-                  }`}
+                    }`}
                 >
                   <img
                     src={step.icon}
@@ -75,9 +89,8 @@ const Cart = () => {
                   />
                 </div>
                 <p
-                  className={`mt-2 text-xs font-semibold uppercase tracking-wide ${
-                    step.active ? 'text-[#101B2D]' : 'text-slate-400'
-                  }`}
+                  className={`mt-2 text-xs font-semibold uppercase tracking-wide ${step.active ? 'text-[#101B2D]' : 'text-slate-400'
+                    }`}
                 >
                   {step.label}
                 </p>
@@ -91,7 +104,7 @@ const Cart = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-8">
+      <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-8 ">
         {/* Cart Items */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-8">
@@ -124,9 +137,36 @@ const Cart = () => {
                 </button>
               </div>
             ) : (
-              <div className="divide-y divide-slate-100">
+
+
+
+
+
+
+
+
+
+
+              <div className="divide-y divide-slate-100 relative">
+               
                 {cartData.map((item) => (
-                  <div key={item._id} className="group flex gap-5 py-6 first:pt-0 last:pb-0">
+                  <div key={item._id} className="group flex gap-5 py-6 first:pt-0 last:pb-0 relative">
+                     {
+                  (openremoveItem && item._id == itemToRemove._id) &&
+                  <div className='bg-white inset-32 opacity-90 w-[350px] h-[100px] absolute top-10 left-28 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-200 ' key={item._id}>
+                    <h1 className='text-sm p-2 text-center pt-3 '>Are you sure you want to remove this product</h1>
+                    <div className='flex flex-row items-center justify-between p-4'>
+                      <button className='bg-red-400 text-white rounded-xl px-2 hover:bg-red-600' onClick={() => {  handleRemove()}}>RemoveItem</button>
+                      <button className='bg-blue-600 text-white rounded-xl px-2 hover:bg-blue-900' onClick={() => setOpenRemoveItem(false)}>Cancel</button>
+                    </div>
+                  </div>
+                }
+
+
+
+
+
+
                     <div className="relative shrink-0">
                       <img
                         src={item.image?.[0]}
@@ -134,7 +174,7 @@ const Cart = () => {
                         className="h-28 w-24 sm:h-32 sm:w-28 object-cover rounded-xl shadow-sm"
                       />
                       <button
-                        onClick={() => handleRemove(item)}
+                        onClick={() => {setItemToRemove(item) ; setOpenRemoveItem(true)}}
                         aria-label={`Remove ${item.name} from cart`}
                         className="absolute -top-2 -right-2 w-7 h-7 bg-white rounded-full shadow-md border border-slate-100 flex items-center justify-center hover:bg-[#FDEDE7] transition-colors duration-150"
                       >
@@ -153,7 +193,7 @@ const Cart = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center bg-[#F4F7FA] rounded-full border border-slate-200">
                           <button
-                            onClick={() => handleDecrease(item)}
+                            onClick={() => decreaseQuantityFromCart(item._id)}
                             aria-label="Decrease quantity"
                             className="w-9 h-9 flex items-center justify-center text-slate-600 hover:text-[#D9684A] transition-colors rounded-full"
                           >
@@ -163,7 +203,7 @@ const Cart = () => {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => handleIncrease(item)}
+                            onClick={() => increaseQuantityInCart(item)}
                             aria-label="Increase quantity"
                             className="w-9 h-9 flex items-center justify-center text-slate-600 hover:text-[#D9684A] transition-colors rounded-full"
                           >
@@ -190,48 +230,24 @@ const Cart = () => {
         </div>
 
         {/* Order Summary */}
-        <div className="lg:sticky lg:top-8 self-start">
-          <div className="bg-[#101B2D] rounded-2xl shadow-lg p-7 sm:p-8 text-white">
-            <h2 className="font-serif text-xl font-semibold mb-6">Order Summary</h2>
 
-            <div className="space-y-3 mb-6 text-sm">
-              <div className="flex justify-between text-slate-300">
-                <span>Subtotal</span>
-                <span className="text-white font-medium">
-                  {symbol}
-                  {subtotal.toLocaleString()}
-                </span>
-              </div>
-            </div>
-
-            <div className="pt-5 border-t border-white/10 mb-6">
-              <label className="text-sm text-slate-300 mb-2 block">Have a coupon?</label>
-              <input
-                type="text"
-                placeholder="Enter code"
-                className="w-full px-4 py-3 bg-white/5 border border-white/15 rounded-xl placeholder:text-slate-400 text-white focus:ring-2 focus:ring-[#D9684A] focus:border-transparent transition-all duration-200"
-              />
-            </div>
-
-            <div className="border-t border-white/10 pt-5 space-y-5">
-              <div className="flex justify-between items-baseline">
-                <span className="text-slate-300">Total</span>
-                <span className="text-2xl font-bold">
-                  {symbol}
-                  {subtotal.toLocaleString()}
-                </span>
-              </div>
-
-              <button
-                onClick={() => navigate('/placeorder')}
-                disabled={cartData.length === 0}
-                className="w-full bg-[#D9684A] text-white py-4 rounded-full font-semibold text-base shadow-md hover:bg-[#C75A3D] disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
-              >
-                Proceed to Checkout →
-              </button>
-            </div>
+        <div className='bg-white shadow-2xl rounded-md md:p-3  p-3 flex flex-col items-start  justify-between md:min-h-[350px] min-h-[300px] '>
+          <div className='flex flex-col items-start'>
+          <h1 className='text-center text-lg text-gray-600'>Your Order</h1>
+          <OrderSummaryCard />  
+          <OrderSummaryCard />
+          <OrderSummaryCard />  
           </div>
+            
+
+
+          <button className='self-center text-white  rounded-xl py-3 px-8 bg-slate-950 transition-all duration-200 hover:scale-105' onClick={() => navigate('/placeorder')}>CheckOut</button>
+
+
         </div>
+        
+          
+        
       </div>
     </div>
   );
