@@ -11,7 +11,7 @@ import Cart from './Pages/Cart';
 import About from './Pages/About';
 import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
-import SearchBar from './Components/SearchBar';
+// import SearchBar from './Components/SearchBar';
 import OtpVerification from './Pages/OtpVerification';
 import { ToastContainer, toast } from 'react-toastify';
 import ForgotPassword from './Pages/ForgotPassword';
@@ -37,7 +37,7 @@ const App = () => {
 
 
       <Navbar />
-      <SearchBar />
+  
       <Routes>
         <Route path='/reset-password/:token' element={<ResetPassword />} />
         <Route path='/login' element={<Login />} />
