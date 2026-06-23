@@ -1,13 +1,47 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useReducer } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import { Link } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import { toast } from 'react-toastify'
 
 const ProductItem = ({ product }) => {
-  const { cartItems, currency, addToCart, addToWishList, wishlist } = useContext(ShopContext)
+  const { cartItems, currency, addToCart, addToWishList, wishlist ,increaseQuantityInCart } = useContext(ShopContext)
   const [toggleWishList, setIsInWishlist] = useState(false)
   const [imageIndex, setImageIndex] = useState(0)
+
+
+  const initialState = {
+    name : product.name , 
+    brand : product.brand,
+    mrp : product.pricing.mrp,
+    sellingPrice : product.pricing.sellingPrice,
+    discountPercentage: product.pricing.discountPercentage,
+    currency : product.pricing.currency,
+    taxIncluded : product.pricing.taxIncluded,
+    ifVariant: false,
+    colorIfVariant : product.variants.color,
+    sizeIfVariant:product.variants.size,
+    stockifVariant : product.variants.stock,
+    ifVariantId:product.variants.variantId,
+    ifVariantPriceAdjustment: product.variants.priceAdjustment,
+    returnable : product.returnPolicy.returnable,
+    returndays:product.returnPolicy.returnDays,
+    exchangeAllowed:product.returnPolicy.exchangeAllowed,
+
+  }
+
+  const [isVariant,setIsVariant] = useState(false);
+
+
+  function reducer(state,action){
+
+
+
+
+  }
+
+  const [state, dispatch] = useReducer(reducer,initialState);
+
 
  
   const safeProduct = {
@@ -53,8 +87,8 @@ const ProductItem = ({ product }) => {
   const handleCart = (e , safeProduct) => {
     e.preventDefault()
     e.stopPropagation()
-    addToCart(safeProduct._id, 1)
-    toast.success("Added to cart");
+    increaseQuantityInCart(safeProduct)
+    
   }
 
   return (

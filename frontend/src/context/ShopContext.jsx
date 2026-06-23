@@ -16,6 +16,7 @@ const ShopContextProvider = (props) => {
   const googleClientId = import.meta.env.VITE_CLIENT_ID;
   const [wishList,setWishList] = useState(new Map());
   const [verificationToken,setVerificationToken] = useState(null);
+  const [orderItems, setOrderItems] = useState(null);
 
 const [userToken, setUserToken] = useState(() => localStorage.getItem('userToken') || '');
 
@@ -100,7 +101,7 @@ const isInWishlist = (item_id) => {
 
   const decreaseQuantityFromCart = (productId) => {
     // console.log("Quantity is Getting decreased here");
-        const newCartMap = new Map(cartItems);
+    const newCartMap = new Map(cartItems);
     let quantity = newCartMap.get(productId);
     if(quantity ===  1){
       newCartMap.delete(productId);
@@ -115,15 +116,22 @@ const isInWishlist = (item_id) => {
   // =================  ADDING PRODUCT INTO THE CART============================
   const  increaseQuantityInCart = (product) => {
     const newCartMap = new Map(cartItems);
-    let quantity = newCartMap.get(product._id);
-    console.log(product.quantity);
-    console.log(product);
-    const totalQuantity = product.quantity !== ( undefined || null) ? product.quantity : 10; // make it zero after
-    console.log(totalQuantity);
+    let quantity = 0 ;
+    if(newCartMap.has(product._id)){
+        quantity = newCartMap.get(product._id);
+    }
+    console.log(winterProducts[0]);
+    // let quantity = newCartMap.get(product._id);
+  
+    // const totalQuantity = product.quantity !== ( undefined || null) ? product.quantity : 10; // make it zero after
+    const totalQuantity  = 10;
+    // console.log(cartItems);
     if(quantity + 1 <= totalQuantity){
-
         newCartMap.set(product._id , quantity + 1);
-        setCartItems(newCartMap);
+        setCartItems( new Map(newCartMap));
+
+        toast.success("Added to cart");
+
     }else{
       toast.error("product out of Stock");
     }
@@ -151,10 +159,30 @@ const isInWishlist = (item_id) => {
 
   const makeOrder = () => {
 
-  // const orderDetails = {};
-  // for(key in ){
+  // use entire cart and to make the entire order 
 
-  // }
+
+  const orderDetails  = []
+
+    for(const [productId,quantity]  in cartItems ) {
+      const tempOrder = {};
+        const product = winterProducts.find((item) => item._id === productId);
+        if(!product)continue;
+        tempOrder.name = product.name;
+        tempOrder.mrp = product.pricing.mrp;
+        tempOrder.sellingPrice = product.pricing.sellingPrice;
+        tempOrder.discountpercentage = product.pricing.discountPercentage;
+        tempOrder.taxIncluded = product.pricing.taxIncluded;
+        tempOrder.gstPercentage = product.pricing.gstPercentage;
+
+        
+
+
+
+
+    }
+
+  return null;
 
 
   }

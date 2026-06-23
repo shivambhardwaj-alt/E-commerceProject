@@ -9,7 +9,7 @@ const Product = () => {
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedVariant, setSelectedVariant] = useState({});
   const { productId } = useParams();
-  const {addToCart} = useContext(ShopContext);
+  const {increaseQuantityInCart} = useContext(ShopContext);
   const navigate = useNavigate();
   useEffect(() => {
     if (winterProducts && winterProducts.length > 0) {
@@ -23,7 +23,7 @@ const Product = () => {
   }, [productId]);
 
 
-  console.log(productData);
+
 
 
 
@@ -210,10 +210,10 @@ const Product = () => {
 
 
               <div className="grid grid-cols-2 gap-4">
-                <button className="bg-blue-600 text-white py-4 px-8 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl hover:bg-blue-700 transition-all duration-200 " onClick={() => { addToCart(productData._id) ;toast.success("Added to cart")}}>
+                <button className="bg-blue-600 text-white py-4 px-8 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl hover:bg-blue-700 transition-all duration-200 " onClick={() => { increaseQuantityInCart(productData) ;}}>
                   Add to Cart
                 </button>
-                <button className="border-2 border-gray-300 text-gray-700 py-4 px-8 rounded-xl font-semibold text-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 " onClick={() =>{ addToCart(productData._id);navigate('/cart')}}>
+                <button className="border-2 border-gray-300 text-gray-700 py-4 px-8 rounded-xl font-semibold text-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 " onClick={() =>{ navigate('/cart')}}>
                   Buy Now
                 </button>
               </div>

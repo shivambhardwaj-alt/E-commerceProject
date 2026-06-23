@@ -10,14 +10,14 @@
   }, { _id: false });
 
   const variantSchema = new mongoose.Schema({
-    variantId: { type: String, required: true, unique: true },
+    variantId: { type: String, required: true },
     color: { type: String, required: true },
-    size: { type: String, enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL','OS'], required: true },
+    size: { type: String, enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL','OS'], required: true ,default : "M" },
     sku: { type: String, required: true, unique: true },
     stock: { type: Number, min: 0, default: 0 },
     image: [String], 
-    priceAdjustment: { type: Number, default: 200 },
-  }, { _id: false }); 
+    priceAdjustment: { type: Number, default: 0 },
+  }, { _id: true }); 
 
   const ratingSchema = new mongoose.Schema({
     average: { type: Number, default: 0, min: 0 },
