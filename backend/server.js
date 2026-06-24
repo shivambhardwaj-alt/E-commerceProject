@@ -5,15 +5,25 @@ import connectDB from './config/ConnectDb.js';
 import userRouter from './routes/UserRoutes.js';
 import helmet from 'helmet';
 import logger from './utils/logger.js';
-import rateLimit from 'express-rate-limit';
+
 import productRoutes from './routes/productRoutes.js';
 import adminRouter from './routes/adminRoutes.js';
 import connectCloudinary from './config/connectCloudinary.js';
 import { testConnection } from './config/nodemailer.js';
+import { rateLimit } from 'express-rate-limit';
 
 
 const app = express();
 
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, 
+	limit: 10, 
+	standardHeaders: 'draft-8', 
+	legacyHeaders: false,
+	ipv6Subnet: 56, 
+    message : "Too many request please try again later",
+	
+})
 app.use(express.json());
 app.use(cors());
 app.use(helmet());

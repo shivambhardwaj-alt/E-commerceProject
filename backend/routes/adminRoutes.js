@@ -8,6 +8,6 @@ import { logPayload } from '../middlewares/printPayload.js';
 import { parseFormData } from '../middlewares/formParsing.js';
 const adminRouter = express.Router();
 adminRouter.post('/login',adminValidationToArray,adminValidator,loginAdmin);
-adminRouter.post('/addProduct', uploads.array('images',10),parseFormData,createProductValidation , productValidationRequest,addProduct);
+adminRouter.post('/addProduct', uploads.any(),parseFormData,createProductValidation , productValidationRequest,addProduct);
  
 export default adminRouter;

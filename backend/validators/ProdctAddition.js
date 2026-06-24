@@ -76,10 +76,6 @@ const createProductValidation = [
     .isArray({ min: 1 })
     .withMessage("At least one variant is required"),
 
-  body("variants.*.variantId")
-    .notEmpty()
-    .withMessage("Variant ID is required"),
-
   body("variants.*.color")
     .notEmpty()
     .withMessage("Variant color is required"),

@@ -10,7 +10,7 @@
   }, { _id: false });
 
   const variantSchema = new mongoose.Schema({
-    variantId: { type: String, required: true },
+   
     color: { type: String, required: true },
     size: { type: String, enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL','OS'], required: true ,default : "M" },
     sku: { type: String, required: true, unique: true },
@@ -43,7 +43,6 @@
     category: { type: String, enum: ['Men', 'Women', 'Kids','Unisex'], required: true },
     subCategory: { type: String, required: true, maxlength: 20 },
     productType: { type: String, required: true },
-    images : {type : [String],required: true},
     collection: { type: String, required: true },
     variants: [variantSchema],
     attributes: {

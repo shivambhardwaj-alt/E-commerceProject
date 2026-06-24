@@ -24,16 +24,13 @@ const TABS = [
 ];
 
 const initialVariant = () => ({
-  id: Date.now(),
-  variantId: "",
   color: "",
   colorHex: "#1e40af",
   size: "M",
   sku: "",
   stock: 0,
   priceAdjustment: 200,
-  image: [],
-  _imgInput: "",
+  images: [],
 });
 
 const initialProduct = {
@@ -365,7 +362,7 @@ function Grid({ cols = 2, children, gap = 12 }) {
 
 // ─── Multi-image upload component ─────────────────────────────────────────────
 
-function ImageUpload({ images, onChange }) {
+function ImageUpload({ images, onChange, idPrefix = "img" }) {
   const [dragging, setDragging] = useState(false);
 
   const addFiles = (files) => {
@@ -388,7 +385,7 @@ function ImageUpload({ images, onChange }) {
     <div>
       {/* Drop zone */}
       <label
-        htmlFor="img-upload"
+        htmlFor={`${idPrefix}-upload`}
         onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
         onDragLeave={() => setDragging(false)}
         onDrop={handleDrop}
@@ -415,7 +412,7 @@ function ImageUpload({ images, onChange }) {
           PNG, JPG, WEBP — multiple files supported
         </div>
         <input
-          id="img-upload"
+          id={`${idPrefix}-upload`}
           type="file"
           multiple
           accept="image/*"
@@ -489,7 +486,7 @@ function ImageUpload({ images, onChange }) {
           ))}
           {/* Add more tile */}
           <label
-            htmlFor="img-upload-more"
+            htmlFor={`${idPrefix}-upload-more`}
             style={{
               aspectRatio: "1",
               border: `2px dashed ${T.accentMid}`,
@@ -508,7 +505,7 @@ function ImageUpload({ images, onChange }) {
             +
             <span style={{ fontSize: "10px", color: T.textLight, marginTop: "2px" }}>Add more</span>
             <input
-              id="img-upload-more"
+              id={`${idPrefix}-upload-more`}
               type="file"
               multiple
               accept="image/*"
@@ -584,14 +581,6 @@ function BasicTab({ product, update }) {
       </div>
 
       <div style={styles.card}>
-        <div style={styles.sectionTitle}>🖼️ Product Images</div>
-        <ImageUpload
-          images={product.image}
-          onChange={(files) => update("image", files)}
-        />
-      </div>
-
-      <div style={styles.card}>
         <div style={styles.sectionTitle}>🏷️ Tags & Flags</div>
         <Field label="Tags" style={{ marginBottom: "14px" }}>
           <TagsInput
@@ -637,11 +626,11 @@ function VariantCard({ variant, index, onChange, onRemove }) {
         <button onClick={onRemove} style={{ background: "none", border: "none", cursor: "pointer", color: T.textLight, fontSize: "18px", lineHeight: 1, padding: "2px 6px", borderRadius: "4px" }}>×</button>
       </div>
       <Grid cols={3} gap={10}>
-        <Field label="Variant ID" required><Input value={variant.variantId} onChange={(v) => update("variantId", v)} placeholder="v-001-red-m" /></Field>
         <Field label="SKU" required><Input value={variant.sku} onChange={(v) => update("sku", v)} placeholder="WX-HOD-R-M" /></Field>
         <Field label="Stock"><Input type="number" value={variant.stock} onChange={(v) => update("stock", Number(v))} min="0" /></Field>
+        <Field label="Price Adjustment (₹)"><Input type="number" value={variant.priceAdjustment} onChange={(v) => update("priceAdjustment", Number(v))} /></Field>
       </Grid>
-      <Grid cols={3} gap={10} style={{ marginTop: "10px" }}>
+      <Grid cols={2} gap={10} style={{ marginTop: "10px" }}>
         <Field label="Color">
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <div style={{ position: "relative" }}>
@@ -654,13 +643,12 @@ function VariantCard({ variant, index, onChange, onRemove }) {
         <Field label="Size" required>
           <Select value={variant.size} onChange={(v) => update("size", v)}>{SIZES.map((s) => <option key={s}>{s}</option>)}</Select>
         </Field>
-        <Field label="Price Adjustment (₹)">
-          <Input type="number" value={variant.priceAdjustment} onChange={(v) => update("priceAdjustment", Number(v))} />
-        </Field>
       </Grid>
-      <Field label="Variant Image URLs" hint="Press Enter after each URL" style={{ marginTop: "10px" }}>
-        <TagsInput tags={variant.image} onAdd={(v) => update("image", [...variant.image, v])} onRemove={(i) => update("image", variant.image.filter((_, idx) => idx !== i))} placeholder="Paste image URL + Enter" />
-      </Field>
+      <div style={{ marginTop: "10px" }}>
+        <Field label="Variant Images" required>
+          <ImageUpload images={variant.images} onChange={(files) => update("images", files)} idPrefix={`variant-${index}`} />
+        </Field>
+      </div>
     </div>
   );
 }
@@ -675,7 +663,7 @@ function VariantsTab({ product, update }) {
       <div style={styles.card}>
         <div style={styles.sectionTitle}>🎨 Product Variants</div>
         {product.variants.map((v, i) => (
-          <VariantCard key={v.id} variant={v} index={i} onChange={(nv) => updateVariant(i, nv)} onRemove={() => removeVariant(i)} />
+          <VariantCard key={i} variant={v} index={i} onChange={(nv) => updateVariant(i, nv)} onRemove={() => removeVariant(i)} />
         ))}
         <button onClick={addVariant} style={{
           display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
@@ -827,7 +815,7 @@ function SeoTab({ product, update, onSubmit, submitState }) {
   );
 }
 
-// ─── buildPayload & buildPayloadAsFormData — unchanged from your original ─────
+// ─── buildPayload & buildPayloadAsFormData ────────────────────────────────────
 
 function buildPayload(product) {
   return {
@@ -846,9 +834,12 @@ function buildPayload(product) {
     category: product.category,
     subCategory: product.subCategory,
     productType: product.productType,
-    image: product.image,
     collection: product.collection,
-    variants: product.variants.map(({ id, colorHex, _imgInput, ...v }) => ({ ...v, color: v.color || colorHex })),
+    variants: product.variants.map(({ colorHex, ...v }) => ({ 
+      ...v, 
+      color: v.color || colorHex,
+      images: v.images
+    })),
     attributes: product.attributes,
     winterSpecs: product.winterSpecs,
     sizeGuide: product.sizeGuide,
@@ -876,10 +867,23 @@ function buildPayloadAsFormData(product) {
   form.append("subCategory", product.subCategory);
   form.append("productType", product.productType);
   form.append("collection", product.collection);
-  if (product.image?.length > 0) {
-    product.image.forEach((file) => { if (file instanceof File) form.append("images", file, file.name); });
-  }
-  form.append("variants", JSON.stringify(product.variants));
+
+  product.variants.forEach((variant, idx) => {
+    if (variant.images?.length > 0) {
+      variant.images.forEach((file) => {
+        if (file instanceof File) {
+          form.append(`variant_${idx}_images`, file, file.name);
+        }
+      });
+    }
+  });
+
+  form.append("variants", JSON.stringify(product.variants.map(({ colorHex, ...v }) => ({
+    ...v,
+    color: v.color || colorHex,
+    images: v.images.map(f => f.name || "")
+  }))));
+  
   form.append("attributes", JSON.stringify(product.attributes));
   form.append("winterSpecs", JSON.stringify(product.winterSpecs));
   form.append("sizeGuide", JSON.stringify(product.sizeGuide));
@@ -928,7 +932,10 @@ export default function UploadPage() {
     if (!product.productType) errs.push("Product type is required");
     if (!product.collection) errs.push("Collection is required");
     if (!product.pricing.mrp) errs.push("MRP is required");
-    if (product.image.length === 0) errs.push("At least one product image is required");
+    product.variants.forEach((v, i) => {
+      if (!v.sku) errs.push(`Variant ${i + 1}: SKU is required`);
+      if (!v.images || v.images.length === 0) errs.push(`Variant ${i + 1}: At least one image is required`);
+    });
     return errs;
   };
 
