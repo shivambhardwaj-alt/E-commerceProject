@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useState ,useMemo} from 'react'
 import AddProduct from '../components/AddProduct'
 import { assets, products } from '../assets/assets'
+import axios from 'axios';
 
 const Product = () => {
   const initialState = { search: "", isFocused: false }
@@ -16,7 +17,7 @@ const Product = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { isFocused, search } = state
 
-  //==================== temporary Search bar for this page========================================
+  //==================== temporary Search bar for this page ========================================
   const filteredData = useMemo(() => {
     if (!search.trim()) return products;
 
@@ -29,6 +30,25 @@ const Product = () => {
     );
   }, [products, search]);
 
+
+
+  const [productData, setProductData] = useState([]);
+  // // useEffect(() => {
+
+  // //   const fetchAllProducts = async()=> {
+  // //     try{
+
+  // //       const data
+
+  // //     }catch(error){
+  // //       console.log(error);
+  // //     }
+  // //   }
+
+
+
+
+  // },[])
 
 
 

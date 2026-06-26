@@ -1,5 +1,5 @@
   import mongoose from 'mongoose';
-
+import mongoosePaginate from 'mongoose-paginate-v2';
   const pricingSchema = new mongoose.Schema({
     mrp: { type: Number, required: true },
     sellingPrice: { type: Number },
@@ -91,6 +91,8 @@
     toJSON: { virtuals: true, versionKey: false },
     toObject: { virtuals: true }
   });
+
+  productSchema.plugin(mongoosePaginate);
 
 
   productSchema.index({ slug: 1 });

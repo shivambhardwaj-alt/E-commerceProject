@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-
+import mongoosePaginate from 'mongoose-paginate-v2';
 const addressSchema = new mongoose.Schema({
   addressId: { type: String, default: 'Not Available' },
   name: { type: String,  trim: true },
@@ -74,12 +74,15 @@ const userSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
+userSchema.plugin(mongoosePaginate);
+
 
 userSchema.index({ 'personalInfo.email': 1 });
 userSchema.index({ role: 1 });
 userSchema.index({ 'personalInfo.phone': 1 }, { sparse: true });
 
 const UserModel = mongoose.model("User" ,userSchema);
+
 
 
 

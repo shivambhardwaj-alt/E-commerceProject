@@ -147,11 +147,22 @@ const getAllProducts = async(req ,  res) => {
 
     logger.info("Query generated at getAllProducts");
     try{
-
-
+        const {page } = req.query ;
+        console.log(page)
+        const options = {
+            page : parseInt(page),
+            limit : 4,
+            
+        }
+       
+        const products = await productModel.paginate({} , options);
+        if(!res){
+            logger.info("Result is not found in getAllProducts");
+            return res.status(404).json({success : false, message : "Products Not Found"});
+        }
 
         logger.info("Query Successful");
-        return res.status(200).json({success : true, message : "All products for admin"});
+        return res.status(200).json({success : true, message : "All products for admin" , products});
 
     }catch(error){
         logger.warn("Query Failed");
