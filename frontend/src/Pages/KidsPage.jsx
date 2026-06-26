@@ -9,12 +9,25 @@ const KidsPage = () => {
   const [kidsCollection, setKidsCollection] = useState([])
   
 
-  useEffect(() => {
-    const filtered = winterProducts.filter(
-      item => item.category?.toLowerCase() === 'kids'
-    )
-    setKidsCollection(filtered)
-  }, [])
+    useEffect(() => {
+  
+
+    // here loading and no result found is needed to add here 
+
+    const getKidsCollection = async() => {
+      try{
+        const {data}   = await axios.get(backendUrl + "/api/products/category-products/Kids");
+        
+        setKidsCollection(data.data);
+
+      }catch(error){
+        console.log(error);
+      }
+    }
+    getKidsCollection();
+
+
+  }, []);
 
   return (
     <div className="w-full px-4">

@@ -56,7 +56,7 @@ const startServer = async () => {
         })();
         // ====================== ROUTES HERE =======================================
         app.use('/api/user',userRouter);
-        app.use('/api/product',productRoutes);
+        app.use('/api/products',productRoutes);
         app.use('/api/admin',adminRouter);
 
        app.listen(PORT, () => {

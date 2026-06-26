@@ -1,19 +1,36 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Filter from '../Components/Filter'
 import { winterProducts } from '../assets/assets'
 import ProductItem from '../Components/ProductItem'
 import { assets } from '../assets/assets'
+import axios from 'axios'
+import { ShopContext } from '../context/ShopContext'
 
 const WomenPage = () => {
 
-  const [womenCollection, setWomenCollection] = useState([])
+  const [womenCollection, setWomenCollection] = useState([]);
+  const {backendUrl} = useContext(ShopContext);
 
-  useEffect(() => {
-    const filtered = winterProducts.filter(
-      item => item.category === 'Women'
-    )
-    setWomenCollection(filtered)
-  }, [])
+   useEffect(() => {
+    const getWomenCollection = async() => {
+      try{
+        const {data}   = await axios.get(backendUrl + "/api/products/category-products/Women");
+        
+        setWomenCollection(data.data);
+
+      }catch(error){
+        console.log(error);
+      }
+    }
+    getWomenCollection();
+
+
+
+
+
+
+
+  }, []);
 
   return (
      <div className="w-full px-4">

@@ -2,15 +2,35 @@ import React, { useEffect, useState } from 'react';
 import Filter from '../Components/Filter';
 import { assets, winterProducts } from '../assets/assets';
 import ProductItem from '../Components/ProductItem';
-
+import axios from "axios";
+import { useContext } from 'react';
+import { ShopContext } from '../context/ShopContext';
 const MenPage = () => {
   const [mensCollection, setMensCollection] = useState([]);
+  const {backendUrl} = useContext(ShopContext);
 
   useEffect(() => {
-    const filtered = winterProducts.filter(
-      (item) => item.category === 'Men'
-    );
-    setMensCollection(filtered);
+    
+
+    // here loading and no result found is needed to add here 
+    
+    const getMensCollection = async() => {
+      try{
+        const {data}   = await axios.get(backendUrl + "/api/products/category-products/Men");
+        setMensCollection(data.data);
+
+      }catch(error){
+        console.log(error);
+      }
+    }
+    getMensCollection();
+
+
+
+
+
+
+
   }, []);
 
   return (

@@ -6,14 +6,26 @@ import ProductItem from './ProductItem';
 import { assets } from '../assets/assets';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
 const LatestCollection = () => {
   const [latestProducts, setLatestProducts] = useState([]);
-  const {addToWishList,addToCart} = useContext(ShopContext);
+  const {addToWishList,addToCart , backendUrl} = useContext(ShopContext);
   const navigate = useNavigate();
   
   useEffect(() => {
-    setLatestProducts(winterProducts.reverse().slice(0, 4));
+    const fetchOurFeaturedProducts = async() => {
+      try{
+        const {data}  = await axios.get(backendUrl + "/api/products/getFeaturedProducts");
+        console.log(data.data);
+        setLatestProducts(data.data);
+
+      }catch(error){
+        console.log(error);
+      }
+    }
+
+
+    fetchOurFeaturedProducts();
 
   }, []);
 
@@ -67,7 +79,7 @@ const LatestCollection = () => {
               {/* Product Image */}
               <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50 p-4">
                 <img 
-                  src={product.image?.[0]} 
+                  src={product.variants[0].image.length > 0 && product.variants[0].image[0]} 
                   alt={product.name} 
                   className="w-full h-64 object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
                 />

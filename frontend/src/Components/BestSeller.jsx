@@ -5,16 +5,29 @@ import ProductItem from './ProductItem';
 import { assets, winterProducts } from '../assets/assets';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import  axios from "axios";
 
 const BestSeller = () => {
   const [bestSeller, setBestSeller] = useState([]);
-  const { addToCart, addToWishList } = useContext(ShopContext);
+  const { addToCart, addToWishList ,backendUrl } = useContext(ShopContext);
   
   const navigte = useNavigate();
   const bestProducts = winterProducts.reverse().filter(product => product.bestseller);
   
+  // loading effect is needed to add here
   useEffect(() => {
-    setBestSeller(bestProducts.slice(0, 4));
+    const fetchBestSellerProducts = async() => {
+      try{
+        const { data } = await axios.get(backendUrl + "/api/products/bestSeller");
+        setBestSeller(data.data);
+      }catch(error){
+        console.log(error);
+      } 
+    }
+
+
+    fetchBestSellerProducts();
+
   }, []);
 
   const cartHandler = (productId) => {
@@ -49,7 +62,7 @@ const BestSeller = () => {
             {/* Product Image */}
             <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50 p-4">
               <img 
-                src={product.image?.[0]} 
+                src={product.variants[0].image.length > 0 && product.variants[0].image[0] } 
                 alt={product.name} 
                 className="w-full h-64 object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
               />

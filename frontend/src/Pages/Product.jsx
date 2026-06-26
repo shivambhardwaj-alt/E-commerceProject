@@ -1,15 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { winterProducts } from '../assets/assets';
 import { ShopContext } from '../context/ShopContext';
 import RelatedProduct from '../Components/RelatedProduct';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 const Product = () => {
   const [productData, setProductData] = useState({});
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedVariant, setSelectedVariant] = useState({});
   const { productId } = useParams();
-  const {increaseQuantityInCart} = useContext(ShopContext);
+  const {increaseQuantityInCart ,backendUrl} = useContext(ShopContext);
   const navigate = useNavigate();
   useEffect(() => {
     if (winterProducts && winterProducts.length > 0) {
@@ -23,14 +24,31 @@ const Product = () => {
   }, [productId]);
 
 
-
-
-
-
+  const {slug} = useParams();
 
   useEffect(() => {
+    const fetchProductDetails = async() => {
+      try{
 
-  },[productId])
+        const {data} = await axios.get(backendUrl + "/api/products/main-product" , {params : {slug : slug}});
+
+        console.log(data);
+
+
+      }catch(error){
+        console.log(error);
+      }
+    }
+
+    fetchProductDetails();
+  },[])
+
+
+
+
+  // useEffect(() => {
+
+  // },[productId])
 
   const handleImageClick = (img) => {
     setSelectedImage(img);
