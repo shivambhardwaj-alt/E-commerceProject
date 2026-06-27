@@ -66,7 +66,7 @@ const WishList = () => {
                   {/* Product Image */}
                   <div className="w-20 h-24 flex-shrink-0">
                     <img
-                      src={product.image?.[0]}
+                      src={product.variants[0]?.image[0]}
                       alt={product.name}
                       className="w-full h-full object-contain rounded border"
                     />
@@ -79,15 +79,18 @@ const WishList = () => {
                     </h3>
 
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="flex items-center text-yellow-400 text-sm">
-                        ★★★★☆ (23)
+                      <div className="flex items-center text-yellow-400 text-sm"> 
+                        {product.ratings.totalReviews}
+
+                        {/* here addition of stars is needed  */}
                       </div>
-                      <span className="text-xs text-gray-500">| Free Delivery</span>
+                      <span className="text-xs text-gray-500">| <span className= {!product.shipping.freeShipping
+          && "line-through"}>Free Delivery</span></span>
                     </div>
 
                     <div className="space-y-1 mb-4">
                       <p className="text-lg font-bold text-gray-900">
-                        ₹{product.pricing?.sellingPrice || 0}
+                        ₹{Math.ceil(product.pricing?.sellingPrice || 0 + product.variants[0]?.priceAdjustment)}
                       </p>
                       {product.pricing?.mrp && (
                         <p className="text-sm text-gray-500 line-through">
@@ -109,7 +112,7 @@ const WishList = () => {
                       >
                         Move to Cart
                       </button>
-                      <button className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 bg-white text-sm font-medium rounded-md hover:bg-gray-50 transition-colors" onClick={() => navigate(`/product/${product._id}`)}>
+                      <button className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 bg-white text-sm font-medium rounded-md hover:bg-gray-50 transition-colors" onClick={() => navigate(`/product/${product.slug}`)}>
                         Buy Now
                       </button>
                     </div>

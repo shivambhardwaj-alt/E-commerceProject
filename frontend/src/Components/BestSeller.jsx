@@ -6,16 +6,18 @@ import { assets, winterProducts } from '../assets/assets';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import  axios from "axios";
+import Loading from '../Pages/Loading';
 
 const BestSeller = () => {
   const [bestSeller, setBestSeller] = useState([]);
   const { addToCart, addToWishList ,backendUrl } = useContext(ShopContext);
-  
+  const[loading,setLoading] = useState(false);
   const navigte = useNavigate();
   const bestProducts = winterProducts.reverse().filter(product => product.bestseller);
   
   // loading effect is needed to add here
   useEffect(() => {
+    setLoading(true);
     const fetchBestSellerProducts = async() => {
       try{
         const { data } = await axios.get(backendUrl + "/api/products/bestSeller");
@@ -28,6 +30,7 @@ const BestSeller = () => {
 
     fetchBestSellerProducts();
 
+    setLoading(false);
   }, []);
 
   const cartHandler = (productId) => {
@@ -39,6 +42,9 @@ const BestSeller = () => {
   };
 
   return (
+
+
+    loading ? <Loading /> : 
     <div className="my-20 max-w-7xl mx-auto px-6">
       <div className="text-center mb-20">
         <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold mb-6 prata-regular bg-gradient-to-r from-gray-900 to-slate-700 bg-clip-text text-transparent drop-shadow-2xl'>
@@ -80,7 +86,7 @@ const BestSeller = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       addToWishList(product);
-                      toast.success("Added to wishlist")
+           
                     }}
                   />
                   <img 
@@ -90,7 +96,7 @@ const BestSeller = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       addToCart(product);
-                      toast.success("Added to cart");
+                   
                     }}
                   />
                 </div>

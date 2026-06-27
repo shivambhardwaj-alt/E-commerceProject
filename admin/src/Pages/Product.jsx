@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { adminContext } from '../context/AdminContext';
 import { useContext } from 'react';
+import Loading from './Loading';
 
 const Product = () => {
   const initialState = { search: "", isFocused: false }
@@ -15,6 +16,7 @@ const Product = () => {
   const [hasPrevPage, setHasPrevPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
   const { backendUrl } = useContext(adminContext);
+  const [loading , setLoading] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -24,9 +26,11 @@ const Product = () => {
   const [newbuttonValues, setNewButtonValues] = useState(buttonValues);
 
   useEffect(() => {
+    setLoading(true);
     const start = Math.max(1, currentPage - 2);
     const arr = Array.from({ length: 6 }, (_, i) => start + i);
     setNewButtonValues(arr);
+    setLoading(false);
   }, [currentPage]);
 
 
@@ -46,6 +50,7 @@ const Product = () => {
   }
 
   const increasingHandleClick = () => {
+    setLoading(true);
     if (newbuttonValues[0] + 1 > 0 && newbuttonValues[5] + 1 < totalPages + 5) {
       let temp = newbuttonValues.slice();
       for (let i = 0; i < 6; i++) {
@@ -54,17 +59,21 @@ const Product = () => {
       setNewButtonValues(temp);
     }
 
+    setLoading(false)
+;
 
 
 
   }
   const decreasingHandleClick = () => {
+    setLoading(true);
     if (newbuttonValues[0] - 1 >= 1) {
       let temp = newbuttonValues.slice();
       for (let i = 0; i < 6; i++)temp[i]--;
       setNewButtonValues(temp);
 
     }
+    setLoading(false);
 
   }
 
@@ -102,6 +111,7 @@ const Product = () => {
 
   const [productData, setProductData] = useState([]);
   useEffect(() => {
+    setLoading(true);
 
     const fetchAllProducts = async () => {
       try {
@@ -127,12 +137,19 @@ const Product = () => {
     fetchAllProducts();
 
 
+    setLoading(false);
+
+
 
   }, [page])
 
 
 
   return (
+
+
+
+    loading ? <Loading /> : 
     <div className='px-4 py-2'>
       {/* Header row */}
       <div className='flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mt-1 w-full'>

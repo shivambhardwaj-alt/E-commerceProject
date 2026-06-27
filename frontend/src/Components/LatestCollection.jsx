@@ -7,16 +7,18 @@ import { assets } from '../assets/assets';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Loading from '../Pages/Loading';
 const LatestCollection = () => {
   const [latestProducts, setLatestProducts] = useState([]);
   const {addToWishList,addToCart , backendUrl} = useContext(ShopContext);
   const navigate = useNavigate();
-  
-  useEffect(() => {
+  const [loading,setLoading] = useState(false);
+    useEffect(() => {
+      setLoading(true);
     const fetchOurFeaturedProducts = async() => {
       try{
         const {data}  = await axios.get(backendUrl + "/api/products/getFeaturedProducts");
-        console.log(data.data);
+       
         setLatestProducts(data.data);
 
       }catch(error){
@@ -26,10 +28,12 @@ const LatestCollection = () => {
 
 
     fetchOurFeaturedProducts();
+    setLoading(false);
 
   }, []);
 
   return (
+    loading ? <Loading /> : 
     <div className='my-20'>
      
       <div className='my-12 py-12 bg-gradient-to-b from-slate-50 to-white'>
@@ -75,24 +79,25 @@ const LatestCollection = () => {
 
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8'>
           {latestProducts.map((product, index) => (
-            <div key={product._id || index} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 border border-gray-100 cursor-pointer" onClick={(e) => navigate(`/product/${product._id}`)}>
+            <div key={product._id || index} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 border border-gray-100 cursor-pointer">
               {/* Product Image */}
               <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50 p-4">
                 <img 
                   src={product.variants[0].image.length > 0 && product.variants[0].image[0]} 
                   alt={product.name} 
+                  onClick={() => navigate(`/product/${product.slug}`)}
                   className="w-full h-64 object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
                   <div className="flex flex-col gap-2 bg-white/90 backdrop-blur-sm p-2 rounded-xl shadow-lg">
-                    <img src={assets.heart_icon} alt="Wishlist" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => {addToWishList(product) ;toast.success("Added to wishlist") }} />
-                    <img src={assets.cart2} alt="Add to cart" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => {addToCart(product._id) ; toast.success("Added to cart") }} />
+                    <img src={assets.heart_icon} alt="Wishlist" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => {addToWishList(product) ; }} />
+                    <img src={assets.cart2} alt="Add to cart" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => {addToCart(product._id) ;  }} />
                   </div>
                 </div>
               </div>
 
               {/* Product Details */}
-              <div className="p-6 space-y-3">
+              <div className="p-6 space-y-3" onClick={() => navigate(`product/${product.slug}`)}>
                 <h3 className="font-semibold text-lg text-gray-900 leading-tight line-clamp-2">{product.name}</h3>
                 
                 <div className="flex items-center gap-1">

@@ -26,13 +26,16 @@ const [userToken, setUserToken] = useState(() => localStorage.getItem('userToken
   // this will add into the cart and  get cart count will display the count of added items in objects
  const addToWishList = (item) => {
   setWishList(prev => {
+  
     const newMap = new Map(prev);
     const exist = newMap.get(item._id);
     if(exist){
-      return newMap;
       toast.warn("Product already Exists");
+      return newMap;
     }
     newMap.set(item._id,item);
+    setWishList(newMap);
+    toast.success("Added in Wishlist")
     return newMap;
 
     

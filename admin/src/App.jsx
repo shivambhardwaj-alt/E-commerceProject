@@ -11,6 +11,7 @@ import Customers from './pages/Customers.jsx'
 
 import Product from './pages/Product.jsx';
 import Navbar from './components/Navbar.jsx';
+import Loading from './pages/Loading.jsx';
 const App = () => {
   const {adminToken,setAdminToken} = useContext(adminContext) ;
   return (
@@ -18,6 +19,7 @@ const App = () => {
     (!adminToken === null ? <Login /> :
    
     <div className='flex flex-row flex-1 gap-5 sm:gap-8 md:gap-10 lg:gap-20 overflow-hidden'>
+           
       <Sidebar  className = ''/>
         <div className=' transition-all ml-40 duration-300  md:ml-44 w-[calc(100%-16rem)] sm:ml-32 lg:ml-56'>
 
@@ -26,9 +28,10 @@ const App = () => {
           <Route path = '/' element = {<Dashboard />}/>
           <Route path = '/orders' element = {<Order />} />
            <Route path = '/customers' element = {<Customers />} />
-           
            <Route path='/products' element = {<Product />} />
-           <Route path = 'add-product' element  = {<UploadPage />} />
+           <Route path = '/add-product' element  = {<UploadPage />} />
+      
+           
         </Routes>
         
       </div>

@@ -128,7 +128,7 @@ import order from './order.svg';
 import van from './van.svg';
 import location from './location (2).svg';
 import sale from './sale.jpg';
-
+import found from './fouund.jpeg';
 
 export const assets = {
     logo,
@@ -171,6 +171,7 @@ van,
 sale,
 payment,
 user,
+found,
 }
 
 export const products = [
