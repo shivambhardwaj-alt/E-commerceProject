@@ -10,7 +10,7 @@ const Sidebar = () => {
     { icon: assets.dashboard, label: 'Dashboard', path: '/' },
     { icon: assets.orders, label: 'Orders', path: '/orders' },
     { icon: assets.customer, label: 'Customers', path: '/customers' },
-    { icon: assets.order, label: "Products", path: '/products/1' },
+    { icon: assets.order, label: "Products", path: '/products?page=1' },
     {icon:assets.analytics , label : "Analytics" , path : "/analytics"},// analytics
 
     {icon : assets.offer , label : "Offers" , path :'/offers'},// settings

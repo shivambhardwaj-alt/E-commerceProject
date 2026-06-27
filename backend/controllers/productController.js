@@ -148,10 +148,10 @@ const getAllProducts = async(req ,  res) => {
     logger.info("Query generated at getAllProducts");
     try{
         const {page } = req.query ;
-        console.log(page)
+        
         const options = {
             page : parseInt(page),
-            limit : 4,
+            limit : 20,
             
         }
        
