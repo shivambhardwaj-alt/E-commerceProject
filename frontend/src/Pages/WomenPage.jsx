@@ -95,7 +95,7 @@ const WomenPage = () => {
 
           {/* PRODUCTS GRID */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4
-                          gap-3 mt-10">
+                          lg:gap-60 gap-20  mt-10">
             {womenCollection.map((item, index) => (
               <ProductItem key={index} product={item} />
             ))}

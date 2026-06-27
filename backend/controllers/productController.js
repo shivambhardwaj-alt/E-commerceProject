@@ -2,7 +2,7 @@ import { FAILOVER_MODES } from "redis";
 import productModel from "../models/productModel.js";
 import logger from "../utils/logger.js";
 import e from "express";
-import { makeProducts } from "../services/processQueries.js";
+import { generateProductRelatedProducts, makeProducts } from "../services/processQueries.js";
 
 
 
@@ -228,8 +228,35 @@ const getProductViaId = async(req,res) => {
 }
 
 
+const getRelatedProducts = async(req, res) => {
+    logger.info("Query Generated at getRelatedProducts");
+    try{
+        
+        const {category , brand } = req.query;
+        const products = await productModel.find({category , brand});
+        const processedProducts = generateProductRelatedProducts(products);
+        logger.info("fetched Products if available from database");
+        if(!products){
+            logger.warn("No related Product found here");
+            return res.status(404).json({success : false, message : "Products Not Found"});
+        }
+        logger.info("Query Successful");
+        return res.status(200).json({success : true, message : "Related Products Via category and brand",data :  processedProducts});
 
 
 
 
-export { getBestProducts ,getOurFeaturedProducts ,getAllProducts ,getCategoryCollection ,getProductViaId};
+    }catch(error){
+        logger.error("Error happened at getRelatedProducts" , error);
+        return res.status(500).json({success :  false, message : "Internal Error"});
+    }
+}
+
+
+
+
+
+export { getBestProducts ,getOurFeaturedProducts ,getAllProducts ,getCategoryCollection ,getProductViaId,
+    getRelatedProducts, 
+
+};

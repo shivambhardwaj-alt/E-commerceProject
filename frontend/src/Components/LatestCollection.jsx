@@ -109,7 +109,7 @@ const LatestCollection = () => {
                     {product.pricing?.currency === 'INR' ? '₹' : 
                      product.pricing?.currency === 'USD' ? '$' : 
                      product.pricing?.currency === 'EUR' ? '€' : 
-                     product.pricing?.currency === 'GBP' ? '£' : ''}{product.pricing?.sellingPrice}
+                     product.pricing?.currency === 'GBP' ? '£' : ''}{Math.ceil(product.pricing?.sellingPrice + product.variants[0].priceAdjustment)}
                   </span>
                 </div>
               </div>

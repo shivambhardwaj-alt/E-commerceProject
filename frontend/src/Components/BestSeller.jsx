@@ -58,7 +58,7 @@ const BestSeller = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
         {bestSeller.map((product, index) => (
-          <div key={product._id || index} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 border border-gray-100 cursor-pointer" onClick={() => navigte(`/product/${product._id}`)}>
+          <div key={product._id || index} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 border border-gray-100 cursor-pointer" onClick={() => navigte(`/product/${product.slug}`)}>
             {/* Product Image */}
             <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50 p-4">
               <img 
@@ -115,7 +115,7 @@ const BestSeller = () => {
                   {product.pricing?.currency === 'INR' ? '₹' : 
                    product.pricing?.currency === 'USD' ? '$' : 
                    product.pricing?.currency === 'EUR' ? '€' : 
-                   product.pricing?.currency === 'GBP' ? '£' : ''}{product.pricing?.sellingPrice}
+                   product.pricing?.currency === 'GBP' ? '£' : ''}{ Math.ceil(product.pricing?.sellingPrice + product.variants[0].priceAdjustment)}
                 </span>
               </div>
             </div>

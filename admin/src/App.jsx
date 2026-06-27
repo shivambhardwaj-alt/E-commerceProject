@@ -15,7 +15,7 @@ const App = () => {
   const {adminToken,setAdminToken} = useContext(adminContext) ;
   return (
 
-    (adminToken === null ? <Login /> :
+    (!adminToken === null ? <Login /> :
    
     <div className='flex flex-row flex-1 gap-5 sm:gap-8 md:gap-10 lg:gap-20 overflow-hidden'>
       <Sidebar  className = ''/>
@@ -27,7 +27,7 @@ const App = () => {
           <Route path = '/orders' element = {<Order />} />
            <Route path = '/customers' element = {<Customers />} />
            
-           <Route path='/products' element = {<Product />} />
+           <Route path='/products/:page' element = {<Product />} />
            <Route path = 'add-product' element  = {<UploadPage />} />
         </Routes>
         

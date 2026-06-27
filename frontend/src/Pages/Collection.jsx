@@ -1,423 +1,275 @@
 import React, { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Star, ShoppingBag, Filter, Snowflake } from 'lucide-react';
 
 const CollectionsPage = () => {
-  const [hoveredBrand, setHoveredBrand] = useState(null);
+  const [activeFilter, setActiveFilter] = useState('All');
+
+  const filters = ['All', 'Outerwear', 'Accessories', 'Limited Edition', 'New Arrivals'];
 
   const collections = [
     {
       id: 1,
       name: 'Winter-X Arctic',
       badge: 'Winter-X Series',
-      description: 'Premium arctic gear engineered for extreme cold. Advanced insulation and weatherproofing.',
+      category: 'Outerwear',
+      description: 'Premium arctic gear engineered for extreme cold with advanced insulation.',
       icon: '❄️',
-      color: '#3da5d9'
+      priceFrom: 4499,
+      rating: 4.8,
+      reviews: 312,
+      accent: 'from-[#3da5d9]/15 to-[#3da5d9]/5',
     },
     {
       id: 2,
       name: 'Glacier Peak Edition',
       badge: 'Limited Edition',
-      description: 'Exclusive mountaineering collection. Built for high-altitude expeditions and harsh climates.',
+      category: 'Limited Edition',
+      description: 'Exclusive mountaineering collection built for high-altitude expeditions.',
       icon: '🧊',
-      color: '#3da5d9'
+      priceFrom: 6999,
+      rating: 4.9,
+      reviews: 148,
+      accent: 'from-[#d97f40]/15 to-[#d97f40]/5',
     },
     {
       id: 3,
       name: 'Alpine Essentials',
       badge: 'New',
-      description: 'Modern alpine wear for everyday winter. Style meets functionality at every level.',
+      category: 'New Arrivals',
+      description: 'Modern alpine wear for everyday winter — style meets functionality.',
       icon: '🏔️',
-      color: '#3da5d9'
+      priceFrom: 2999,
+      rating: 4.6,
+      reviews: 521,
+      accent: 'from-[#3da5d9]/15 to-[#3da5d9]/5',
     },
     {
       id: 4,
       name: 'Frost Urban Collection',
       badge: 'Bestseller',
-      description: 'Contemporary winter fashion for city living. Warmth without compromising style.',
+      category: 'Outerwear',
+      description: 'Contemporary winter fashion for city living, without compromising warmth.',
       icon: '⛸️',
-      color: '#3da5d9'
-    }
+      priceFrom: 3499,
+      rating: 4.7,
+      reviews: 894,
+      accent: 'from-[#3da5d9]/15 to-[#3da5d9]/5',
+    },
+    {
+      id: 5,
+      name: 'Tundra Accessories Set',
+      badge: 'New',
+      category: 'Accessories',
+      description: 'Gloves, beanies, and thermal layers engineered to pair with any shell.',
+      icon: '🧤',
+      priceFrom: 999,
+      rating: 4.5,
+      reviews: 203,
+      accent: 'from-[#d97f40]/15 to-[#d97f40]/5',
+    },
+    {
+      id: 6,
+      name: 'Summit Pro Limited',
+      badge: 'Limited Edition',
+      category: 'Limited Edition',
+      description: 'Numbered drop, technical fabrics tested above 4,000m.',
+      icon: '🏕️',
+      priceFrom: 8499,
+      rating: 5.0,
+      reviews: 67,
+      accent: 'from-[#d97f40]/15 to-[#d97f40]/5',
+    },
   ];
 
-  const brands = [
-    'The North Face',
-    'Arc\'teryx',
-    'Patagonia',
-    'Canada Goose',
-    'Mammut',
-    'Salomon',
-    'Marmot',
-    'Columbia'
+  const brands = ['The North Face', "Arc'teryx", 'Patagonia', 'Canada Goose', 'Mammut', 'Salomon', 'Marmot', 'Columbia'];
+
+  const stats = [
+    { label: 'Collections', value: '40+' },
+    { label: 'Premium Brands', value: '8' },
+    { label: 'Happy Customers', value: '25K+' },
+    { label: 'Avg. Rating', value: '4.8★' },
   ];
 
   const features = [
     {
       title: 'Premium Outerwear',
-      description: 'From insulated parkas to technical shells, our outerwear collection features cutting-edge materials and design. Each piece is tested in real-world conditions to ensure maximum protection and comfort.',
+      description:
+        'From insulated parkas to technical shells, our outerwear lineup uses cutting-edge materials tested in real-world conditions for maximum protection and comfort.',
       icon: '🧥',
-      link: 'View outerwear'
+      link: 'View outerwear',
     },
     {
       title: 'Accessories & Gear',
-      description: 'Complete your winter setup with our curated selection of gloves, beanies, scarves, and thermal layers. All accessories are engineered to work seamlessly with our collections.',
-      icon: '🤖',
-      link: 'Shop accessories'
-    }
+      description:
+        'Complete your setup with gloves, beanies, scarves, and thermal layers — all engineered to work seamlessly with every collection above.',
+      icon: '🤝',
+      link: 'Shop accessories',
+    },
   ];
 
+  const filteredCollections =
+    activeFilter === 'All' ? collections : collections.filter((c) => c.category === activeFilter);
+
   return (
-    <div style={{ background: '#f5f7fa', minHeight: '100vh' }}>
-      {/* Hero Section */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #0f3a52 0%, #1a5a7d 100%)',
-          color: '#f5f7fa',
-          padding: '80px 40px',
-          textAlign: 'center',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '60px',
-            fontSize: '80px',
-            opacity: 0.05
-          }}
-        >
-          ❄️
-        </div>
-        <h1
-          style={{
-            fontSize: '48px',
-            fontWeight: 700,
-            margin: '0 0 16px 0',
-            letterSpacing: '-1px',
-            fontFamily: 'Fraunces, serif'
-          }}
-        >
+    <div className="min-h-screen bg-[#f5f7fa]">
+      {/* Hero */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#0f3a52] to-[#1a5a7d] px-6 py-20 text-center text-[#f5f7fa] sm:py-24">
+        <Snowflake className="absolute -right-4 top-6 h-32 w-32 text-white/5 sm:h-40 sm:w-40" />
+        <Snowflake className="absolute bottom-2 left-8 h-16 w-16 text-white/5" />
+
+        <span className="font-['Sora'] inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-[#bfe3f2]">
+          Winter 2026 Lineup
+        </span>
+
+        <h1 className="font-['Fraunces'] mt-6 text-4xl font-bold tracking-tight sm:text-5xl">
           Our Collections
         </h1>
-        <p
-          style={{
-            fontSize: '18px',
-            margin: 0,
-            opacity: 0.95,
-            maxWidth: '600px',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            fontFamily: 'Sora, sans-serif'
-          }}
-        >
-          Explore our premium winter wear collections from the world's finest brands
+        <p className="font-['Sora'] mx-auto mt-4 max-w-xl text-base text-white/90 sm:text-lg">
+          Explore premium winter wear collections from the world's finest brands — built for every climate.
         </p>
       </div>
 
-      {/* Featured Collections */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 20px' }}>
-        <h2
-          style={{
-            fontSize: '32px',
-            fontFamily: 'Fraunces, serif',
-            color: '#1a3a52',
-            marginBottom: '8px',
-            fontWeight: 700
-          }}
-        >
-          Featured series
-        </h2>
-        <div
-          style={{
-            width: '50px',
-            height: '3px',
-            background: '#3da5d9',
-            marginBottom: '48px'
-          }}
-        />
+      {/* Stats strip */}
+      <div className="border-b border-[#e0e4ea] bg-white">
+        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-6 px-6 py-8 sm:grid-cols-4">
+          {stats.map((s) => (
+            <div key={s.label} className="text-center">
+              <div className="font-['Fraunces'] text-2xl font-bold text-[#1a3a52] sm:text-3xl">{s.value}</div>
+              <div className="font-['Sora'] mt-1 text-xs text-[#666] sm:text-sm">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '24px',
-            marginBottom: '100px'
-          }}
-        >
-          {collections.map((collection) => (
+      <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
+        {/* Section header + filter bar */}
+        <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="font-['Fraunces'] text-3xl font-bold text-[#1a3a52]">Featured series</h2>
+            <div className="mt-2 h-[3px] w-12 bg-[#3da5d9]" />
+          </div>
+
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+            <Filter size={14} className="hidden text-[#666] sm:block" />
+            {filters.map((f) => (
+              <button
+                key={f}
+                onClick={() => setActiveFilter(f)}
+                className={`font-['Sora'] whitespace-nowrap rounded-full px-4 py-2 text-xs font-medium transition-colors sm:text-sm ${
+                  activeFilter === f
+                    ? 'bg-[#1a3a52] text-[#f5f7fa]'
+                    : 'bg-white text-[#666] ring-1 ring-[#e0e4ea] hover:bg-[#e8f4f8] hover:text-[#1a3a52]'
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Collection cards */}
+        <div className="mb-20 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredCollections.map((collection) => (
             <div
               key={collection.id}
-              style={{
-                background: '#fff',
-                border: '0.5px solid #e0e4ea',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                transition: 'all 0.3s',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#3da5d9';
-                e.currentTarget.style.transform = 'translateY(-4px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#e0e4ea';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
+              className="group overflow-hidden rounded-xl border border-[#e0e4ea] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#3da5d9] hover:shadow-lg hover:shadow-[#3da5d9]/10"
             >
-              <div
-                style={{
-                  display: 'inline-block',
-                  background: '#1a5a7d',
-                  color: '#f5f7fa',
-                  padding: '8px 16px',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  margin: '16px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                  borderRadius: '4px',
-                  fontFamily: 'Sora, sans-serif'
-                }}
-              >
-                {collection.badge}
+              {/* Image area */}
+              <div className={`relative flex h-52 items-center justify-center bg-gradient-to-br ${collection.accent}`}>
+                <span className="font-['Sora'] absolute left-4 top-4 rounded-md bg-[#1a5a7d] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#f5f7fa]">
+                  {collection.badge}
+                </span>
+                <span className="text-6xl drop-shadow-sm transition-transform duration-300 group-hover:scale-110">
+                  {collection.icon}
+                </span>
+
+                {/* quick add overlay */}
+                <div className="absolute inset-x-0 bottom-0 flex translate-y-full justify-center gap-2 bg-gradient-to-t from-black/40 to-transparent p-3 transition-transform duration-300 group-hover:translate-y-0">
+                  <button className="font-['Sora'] flex items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-xs font-medium text-[#1a3a52] shadow-sm hover:bg-[#f5f7fa]">
+                    <ShoppingBag size={13} /> Quick view
+                  </button>
+                </div>
               </div>
 
-              <div
-                style={{
-                  width: '100%',
-                  height: '200px',
-                  background: 'linear-gradient(135deg, #e8f4f8 0%, #d0e8f2 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '60px'
-                }}
-              >
-                {collection.icon}
-              </div>
+              {/* Body */}
+              <div className="p-5">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-['Fraunces'] text-lg font-semibold text-[#1a3a52]">{collection.name}</h3>
+                  <div className="flex items-center gap-1 text-xs text-[#666]">
+                    <Star size={13} className="fill-[#d97f40] text-[#d97f40]" />
+                    <span className="font-['Sora'] font-medium text-[#1a3a52]">{collection.rating}</span>
+                    <span className="font-['JetBrains_Mono']">({collection.reviews})</span>
+                  </div>
+                </div>
 
-              <div style={{ padding: '24px 20px' }}>
-                <h3
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: 600,
-                    color: '#1a3a52',
-                    marginBottom: '8px',
-                    fontFamily: 'Fraunces, serif'
-                  }}
-                >
-                  {collection.name}
-                </h3>
-                <p
-                  style={{
-                    fontSize: '14px',
-                    color: '#666',
-                    marginBottom: '16px',
-                    lineHeight: 1.5,
-                    fontFamily: 'Sora, sans-serif'
-                  }}
-                >
-                  {collection.description}
-                </p>
-                <button
-                  style={{
-                    padding: '10px 20px',
-                    background: '#d97f40',
-                    color: '#f5f7fa',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    transition: 'all 0.2s',
-                    fontFamily: 'Sora, sans-serif'
-                  }}
-                  onMouseEnter={(e) => (e.target.style.background = '#c46630')}
-                  onMouseLeave={(e) => (e.target.style.background = '#d97f40')}
-                >
-                  Explore
-                </button>
+                <p className="font-['Sora'] mt-2 text-sm leading-relaxed text-[#666]">{collection.description}</p>
+
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="font-['JetBrains_Mono'] text-sm text-[#1a3a52]">
+                    From ₹{collection.priceFrom.toLocaleString('en-IN')}
+                  </span>
+                  <button className="font-['Sora'] rounded-md bg-[#d97f40] px-4 py-2 text-sm font-medium text-[#f5f7fa] transition-colors hover:bg-[#c46630]">
+                    Explore
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Feature Sections */}
-        {features.map((feature, idx) => (
-          <div
-            key={idx}
-            style={{
-              display: 'flex',
-              gap: '40px',
-              alignItems: 'center',
-              marginBottom: '80px',
-              flexDirection: idx % 2 === 1 ? 'row-reverse' : 'row'
-            }}
-          >
-            <div style={{ flex: 1 }}>
-              <h3
-                style={{
-                  fontSize: '28px',
-                  fontWeight: 600,
-                  color: '#1a3a52',
-                  marginBottom: '16px',
-                  fontFamily: 'Fraunces, serif'
-                }}
-              >
-                {feature.title}
-              </h3>
-              <p
-                style={{
-                  fontSize: '16px',
-                  color: '#666',
-                  lineHeight: 1.7,
-                  marginBottom: '20px',
-                  fontFamily: 'Sora, sans-serif'
-                }}
-              >
-                {feature.description}
-              </p>
-              <button
-                style={{
-                  padding: '12px 24px',
-                  background: 'transparent',
-                  border: '1.5px solid #3da5d9',
-                  color: '#3da5d9',
-                  borderRadius: '6px',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  transition: 'all 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  fontFamily: 'Sora, sans-serif'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#e8f4f8';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                }}
-              >
-                {feature.link}
-                <ArrowRight size={16} />
-              </button>
-            </div>
+        {/* Editorial feature sections */}
+        <div className="space-y-16 sm:space-y-20">
+          {features.map((feature, idx) => (
             <div
-              style={{
-                flex: 1,
-                height: '280px',
-                background: 'linear-gradient(135deg, #e8f4f8 0%, #d0e8f2 100%)',
-                borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '100px'
-              }}
+              key={feature.title}
+              className={`flex flex-col items-center gap-8 sm:gap-10 lg:flex-row ${
+                idx % 2 === 1 ? 'lg:flex-row-reverse' : ''
+              }`}
             >
-              {feature.icon}
+              <div className="flex-1">
+                <h3 className="font-['Fraunces'] text-2xl font-semibold text-[#1a3a52] sm:text-[28px]">
+                  {feature.title}
+                </h3>
+                <p className="font-['Sora'] mt-4 text-base leading-relaxed text-[#666]">{feature.description}</p>
+                <button className="font-['Sora'] mt-5 flex items-center gap-2 rounded-md border-[1.5px] border-[#3da5d9] px-5 py-2.5 text-sm font-medium text-[#3da5d9] transition-colors hover:bg-[#e8f4f8]">
+                  {feature.link}
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+              <div className="flex h-56 w-full flex-1 items-center justify-center rounded-xl bg-gradient-to-br from-[#e8f4f8] to-[#d0e8f2] text-[80px] sm:h-72 sm:text-[100px]">
+                {feature.icon}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
-        {/* Brands Section */}
-        <h2
-          style={{
-            fontSize: '32px',
-            fontFamily: 'Fraunces, serif',
-            color: '#1a3a52',
-            marginBottom: '8px',
-            fontWeight: 700,
-            marginTop: '60px'
-          }}
-        >
-          Premium brands
-        </h2>
-        <div
-          style={{
-            width: '50px',
-            height: '3px',
-            background: '#d97f40',
-            marginBottom: '48px'
-          }}
-        />
+        {/* Brands */}
+        <div className="mt-20 sm:mt-24">
+          <h2 className="font-['Fraunces'] text-3xl font-bold text-[#1a3a52]">Premium brands</h2>
+          <div className="mt-2 h-[3px] w-12 bg-[#d97f40]" />
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '12px'
-          }}
-        >
-          {brands.map((brand, idx) => (
-            <div
-              key={idx}
-              style={{
-                background: '#fff',
-                border: '0.5px solid #e0e4ea',
-                borderRadius: '8px',
-                padding: '20px',
-                textAlign: 'center',
-                transition: 'all 0.2s',
-                cursor: 'pointer',
-                fontFamily: 'Sora, sans-serif'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#1a3a52';
-                e.currentTarget.style.color = '#f5f7fa';
-                e.currentTarget.style.borderColor = '#1a3a52';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#fff';
-                e.currentTarget.style.color = '#1a3a52';
-                e.currentTarget.style.borderColor = '#e0e4ea';
-              }}
-            >
+          <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {brands.map((brand) => (
               <div
-                style={{
-                  fontSize: '15px',
-                  fontWeight: 500
-                }}
+                key={brand}
+                className="font-['Sora'] flex items-center justify-center rounded-lg border border-[#e0e4ea] bg-white px-4 py-5 text-center text-sm font-medium text-[#1a3a52] transition-colors hover:bg-[#1a3a52] hover:text-[#f5f7fa]"
               >
                 {brand}
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div
-        style={{
-          background: '#1a3a52',
-          color: '#f5f7fa',
-          padding: '60px 20px',
-          textAlign: 'center',
-          marginTop: '60px'
-        }}
-      >
-        <h3
-          style={{
-            fontSize: '24px',
-            fontWeight: 600,
-            margin: '0 0 12px 0',
-            fontFamily: 'Sora, sans-serif'
-          }}
-        >
-          Can't find what you're looking for?
-        </h3>
-        <p
-          style={{
-            fontSize: '16px',
-            margin: 0,
-            opacity: 0.9,
-            fontFamily: 'Sora, sans-serif'
-          }}
-        >
+      {/* CTA */}
+      <div className="bg-[#1a3a52] px-6 py-14 text-center text-[#f5f7fa]">
+        <h3 className="font-['Sora'] text-2xl font-semibold">Can't find what you're looking for?</h3>
+        <p className="font-['Sora'] mt-3 text-base text-white/85">
           Contact our team or explore all available products.
         </p>
+        <button className="font-['Sora'] mt-6 rounded-md bg-[#d97f40] px-6 py-3 text-sm font-medium text-[#f5f7fa] transition-colors hover:bg-[#c46630]">
+          Browse all products
+        </button>
       </div>
     </div>
   );

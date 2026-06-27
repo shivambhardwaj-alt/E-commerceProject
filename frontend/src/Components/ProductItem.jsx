@@ -92,7 +92,7 @@ const ProductItem = ({ product }) => {
   }
 
   return (
-    <div className="group bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden relative">
+    <div className="group bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden relative min-w-60">
       {/* Image Container */}
       <div className="relative overflow-hidden bg-gray-50 pt-[130%]">
         <Link to={`/product/${product.slug}`} className="block absolute inset-0">
@@ -151,7 +151,7 @@ const ProductItem = ({ product }) => {
         <div className="flex items-center justify-between mt-3">
           <div className="space-y-1">
             <p className="text-lg font-bold text-gray-900">
-              {product.pricing.currency}{product.pricing.sellingPrice || 0}
+              {product.pricing.currency}{Math.ceil(product.pricing.sellingPrice || 0  + product.variants[0].priceAdjustment)}
             </p>
             {product.pricing.mrp > product.pricing.sellingPrice && (
               <p className="text-xs text-gray-400 line-through">

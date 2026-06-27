@@ -17,7 +17,7 @@ const ShopContextProvider = (props) => {
   const [wishList,setWishList] = useState(new Map());
   const [verificationToken,setVerificationToken] = useState(null);
   const [orderItems, setOrderItems] = useState(null);
-
+  const[productId , setProductId] = useState(new Map());
 const [userToken, setUserToken] = useState(() => localStorage.getItem('userToken') || '');
 
   
@@ -120,7 +120,7 @@ const isInWishlist = (item_id) => {
     if(newCartMap.has(product._id)){
         quantity = newCartMap.get(product._id);
     }
-    console.log(winterProducts[0]);
+    
     // let quantity = newCartMap.get(product._id);
   
     // const totalQuantity = product.quantity !== ( undefined || null) ? product.quantity : 10; // make it zero after
