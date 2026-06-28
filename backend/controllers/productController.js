@@ -1,4 +1,4 @@
-import { FAILOVER_MODES } from "redis";
+import { FAILOVER_MODES, TIME_SERIES_BUCKET_TIMESTAMP } from "redis";
 import productModel from "../models/productModel.js";
 import logger from "../utils/logger.js";
 import e from "express";
@@ -152,18 +152,62 @@ const getAllProducts = async (req, res) => {
 
         const options = {
             page: parseInt(page),
-            limit: 20,
+            limit: 5,
 
         }
 
         const products = await productModel.paginate({}, options);
+       
         if (!res) {
             logger.info("Result is not found in getAllProducts");
             return res.status(404).json({ success: false, message: "Products Not Found" });
         }
+        const dataforAdmin = [];
+  
+
+for (const product of products.docs) {
+    for (const variant of product.variants) {
+        const temp = {};
+        temp.name = product.name;
+        temp.slug = product.slug;
+        temp.brand = product.brand;
+        temp.pricing = product.pricing;
+        temp.category = product.category;
+        temp.subCategory = product.subCategory;
+
+        temp.color = variant.color;
+        temp.size = variant.size;
+        temp.stock = variant.stock;
+        temp.priceAdjustment = variant.priceAdjustment;
+        temp.image = variant.image;
+
+        temp.shipping = product.shipping;
+        temp.ratings = product.ratings;
+        temp.isActive = product.isActive;
+        temp.lowStock = variant.stock <= 5  ;
+
+        dataforAdmin.push(temp);
+    }
+
+
+}
+
+       const frontendData =  {
+            docs : dataforAdmin,
+            totalDocs : products.totalDocs,
+            limit : products.limit,
+            totalPages : products.totalPages,
+            page : products.page,
+            pagingCounter : products.pagingCounter,
+            hasPrevPage : products.hasPrevPage,
+            hasNextPage :products.hasNextPage,
+            prevPage : products.prevPage,
+            nextpage : products.nextPage,
+
+        }
 
         logger.info("Query Successful");
-        return res.status(200).json({ success: true, message: "All products for admin", products });
+        return res.status(200).json({ success: true, message: "All products for admin", product: frontendData});
 
     } catch (error) {
         logger.warn("Query Failed");
@@ -317,7 +361,7 @@ const getCartItems = async (req, res) => {
                     ratings: 1,
                     bestSeller: 1,
                     newArrival: 1,
-                    category : 1, 
+                    category: 1,
 
                     variants: {
                         $filter: {
@@ -334,9 +378,9 @@ const getCartItems = async (req, res) => {
                 }
             }
         ]);
-        if(!products || products.length === 0){
+        if (!products || products.length === 0) {
             logger.warn("Products Not Found for getCartItems");
-            return res.status(404).json({success : false, message :  "Product Not found"});
+            return res.status(404).json({ success: false, message: "Product Not found" });
         }
 
 
@@ -347,7 +391,7 @@ const getCartItems = async (req, res) => {
         return res.status(200).json({
             success: true,
             data: products,
-            message : "Products for the cartItems",
+            message: "Products for the cartItems",
         });
 
     } catch (error) {

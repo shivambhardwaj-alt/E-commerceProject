@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import Loading from './Loading.jsx'
+import Loading from '../pages/Loading.jsx'
 import { assets } from '../assets/assets';
+import ShowCustomerInfo from '../components/ShowCustomerInfo.jsx';
 const Customers = () => {
   // const [,] = useReducer(filteredState,initialState);
   const[customerSearch,setCustomerSearch] = useState("");
@@ -9,6 +10,7 @@ const Customers = () => {
   const [userPreviewData, setUserPreviewData] = useState({});
   const[filteredData,setFiltereData] = useState([]);
   const [loading,setLoading] = useState(false) ;
+  const [showInfo , setShowInfo] = useState(false);
 
 
   // ==========================================================
@@ -374,7 +376,7 @@ const Customers = () => {
   // =========================================================
   return (
     
-    loading ? <div>Loading</div> : <div className='p-1 m-1'>
+    loading ? <div><Loading /></div> : <div className='p-1 m-1'>
       <div className='flex md:flex-row flex-col items-center justify-between p-2 mt-1'>
         <h1 className='text-2xl font-stretch-100% font-mono text-gray-700'>Customers</h1>
         <div className='flex md:flex-row flex-col gap-3 items-center justify-start'>
@@ -397,7 +399,9 @@ const Customers = () => {
       </div>
       <hr className='text-gray-500' />
       {/* ========================== data showing here ============== */}
-      <div>
+      <div className='relative'>
+        <ShowCustomerInfo showInfo = {showInfo} />
+
         <table className='w-full min-w-187.5 text-sm'>
           <thead className='divide-y divide-gray-400'>
             <tr className='hover:bg-gray-100 transition-all duration-300 hover:scale-105'>
@@ -413,11 +417,11 @@ const Customers = () => {
             {
               filteredData.map((item, index) => {
                 return (
-                  <tr key={index} className='hover:bg-gray-900 transition-all duration-200 hover:text-white cursor-pointer'>
-                    <td className='px-4 py-3 text-left text-xs text-gray-500 hover:text-white font-semibold flex flex-col'><span className='hover:text-white'>{item.name}</span><span>{item.email}</span></td>
-                    <td className='px-4 py-3 text-left text-xs text-gray-500 hover:text-white'>{item.phone}</td>
-                    <td className='px-4 py-3 text-left text-xs text-gray-500 hover:text-white'>{item.createdAt}</td>
-                    <td className='px-4 py-3 text-left text-xs text-gray-500 hover:text-white'>{item.country}</td>
+                  <tr key={index} className=' transition-all duration-200    cursor-pointer'>
+                    <td className='px-4 py-3 text-left text-xs text-gray-500  font-semibold flex flex-col'><span className=''>{item.name}</span><span>{item.email}</span></td>
+                    <td className='px-4 py-3 text-left text-xs text-gray-500 '>{item.phone}</td>
+                    <td className='px-4 py-3 text-left text-xs text-gray-500 '>{item.createdAt}</td>
+                    <td className='px-4 py-3 text-left text-xs text-gray-500 '>{item.country}</td>
                     <td className='px-4 py-3 text-left text-xs'>
                       <img src={assets.more} alt="" className='w-5 h-5 opacity-60 ' />
                     </td>

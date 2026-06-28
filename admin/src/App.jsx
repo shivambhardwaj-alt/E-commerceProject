@@ -12,6 +12,7 @@ import Customers from './pages/Customers.jsx'
 import Product from './pages/Product.jsx';
 import Navbar from './components/Navbar.jsx';
 import Loading from './pages/Loading.jsx';
+import Analytics from './pages/Analytics.jsx';
 const App = () => {
   const {adminToken,setAdminToken} = useContext(adminContext) ;
   return (
@@ -30,6 +31,7 @@ const App = () => {
            <Route path = '/customers' element = {<Customers />} />
            <Route path='/products' element = {<Product />} />
            <Route path = '/add-product' element  = {<UploadPage />} />
+           <Route path = '/analytics' element = {<Analytics />} />
       
            
         </Routes>
