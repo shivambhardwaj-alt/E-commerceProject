@@ -11,6 +11,7 @@ const Customers = () => {
   const[filteredData,setFiltereData] = useState([]);
   const [loading,setLoading] = useState(false) ;
   const [showInfo , setShowInfo] = useState(false);
+  const[currentUser , setCurrentUser] = useState(null);
 
 
   // ==========================================================
@@ -400,7 +401,7 @@ const Customers = () => {
       <hr className='text-gray-500' />
       {/* ========================== data showing here ============== */}
       <div className='relative'>
-        <ShowCustomerInfo showInfo = {showInfo} />
+        <ShowCustomerInfo showInfo = {showInfo}  setShowInfo={setShowInfo} User = {currentUser}/>
 
         <table className='w-full min-w-187.5 text-sm'>
           <thead className='divide-y divide-gray-400'>
@@ -423,7 +424,7 @@ const Customers = () => {
                     <td className='px-4 py-3 text-left text-xs text-gray-500 '>{item.createdAt}</td>
                     <td className='px-4 py-3 text-left text-xs text-gray-500 '>{item.country}</td>
                     <td className='px-4 py-3 text-left text-xs'>
-                      <img src={assets.more} alt="" className='w-5 h-5 opacity-60 ' />
+                      <img src={assets.more} alt="" className='w-5 h-5 opacity-60 ' onClick={()=> { setCurrentUser(item);setShowInfo(!showInfo)}} />
                     </td>
                   </tr>
                 )

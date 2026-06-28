@@ -35,7 +35,7 @@ const ShowProductInformation = ({ showInfo, setShowInfo, item }) => {
                     
                     <div className='flex flex-row items-center justify-between gap-3'>
                         {
-                            !isEdit ?
+                            isEdit ?
                                 <h1 className='prata-regular text-lg text-[#16273D]'>{item?.name}</h1>
                                 :
                                 <input
@@ -176,7 +176,7 @@ const ShowProductInformation = ({ showInfo, setShowInfo, item }) => {
                                 {item?.ratings?.average ? item.ratings.average.toFixed(1) : '0.0'}
                             </span>
                             <div className='flex flex-col'>
-                               {/* here Ratings and reviews are needed to added  */}
+                               {/* here Ratings and reviews are needed to added */}
                                 <span className='text-xs jetbrains-mono text-[#9FB0C2]'>
                                     {item?.ratings?.count ?? 0} review{item?.ratings?.count === 1 ? '' : 's'}
                                 </span>
