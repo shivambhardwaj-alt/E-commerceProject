@@ -5,6 +5,8 @@ import CartTotal from '../Components/CartTotal';
 import { winterProducts } from '../assets/assets';
 import { useNavigate } from 'react-router-dom';
 import OrderSummaryCard from '../Components/OrderSummaryCard';
+import axios from 'axios';
+import Loading from './Loading';
 
 /*
   Design notes (so future-you knows the intent):
@@ -20,32 +22,52 @@ import OrderSummaryCard from '../Components/OrderSummaryCard';
 */
 
 const Cart = () => {
-  const { cartItems, updateQuantity, currency, decreaseQuantityFromCart, increaseQuantityInCart, removeItemFromCart } = useContext(ShopContext);
+  const { cartItems, updateQuantity, currency, decreaseQuantityFromCart, increaseQuantityInCart, removeItemFromCart ,backendUrl } = useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
   const navigate = useNavigate();
-  // what is this even doing nothing i guess 
-  useEffect(() => {
-    const array = [];
-    for (const [key, value] of cartItems) {
-      const product = winterProducts.find(item => item._id === key);
-      if (product) array.push({ ...product, quantity: value });
+  const[loading,setLoading] = useState(false);
+useEffect(() => {
+  async function fetchAllCartData(){
+    console.log(cartItems);
+    try {
+      setLoading(true);
+
+      const variantsId = [...cartItems.keys()];
+
+      const {data} = await axios.post(
+        `${backendUrl}/api/products/getCartItems`,
+        { variantsId }
+      );
+
+      setCartData(data.data);
+
+    } catch(error){
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-    setCartData(array);
-  }, [cartItems]);
+  }
+
+  fetchAllCartData();
+
+}, [cartItems]);
+
+
+
+
+
+
+
   const [itemToRemove ,setItemToRemove] = useState(null);
-
-
   const [openremoveItem, setOpenRemoveItem] = useState(false);
-
   const getPrice = (item) =>
-    currency === 'INR' ? `₹${item.pricing.sellingPrice}` : `$${item.pricing.sellingPrice}`;
+    currency === 'INR' ? `₹${Math.ceil(item.pricing.sellingPrice + item.variants[0].priceAdjustment)}` : `$${Math.ceil(item.pricing.sellingPrice + item.variants[0].priceAdjustment)}`;
 
   const subtotal = cartData.reduce(
     (sum, item) => sum + item.pricing.sellingPrice * item.quantity,
     0
   );
   const symbol = currency === 'INR' ? '₹' : '$';
-
   const handleIncrease = (item) => updateQuantity(item._id, item.quantity + 1);
   const handleDecrease = (item) => {
     console.log(cartData);
@@ -69,6 +91,7 @@ const Cart = () => {
   ];
 
   return (
+    loading ?  <Loading /> : 
     <div className="min-h-screen bg-[#F4F7FA] py-10 px-4 sm:px-6 lg:px-8">
 
       <div className="max-w-6xl mx-auto mb-10">
@@ -156,20 +179,16 @@ const Cart = () => {
                   <div className='bg-white inset-32 opacity-90 w-[350px] h-[100px] absolute top-10 left-28 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-200 ' key={item._id}>
                     <h1 className='text-sm p-2 text-center pt-3 '>Are you sure you want to remove this product</h1>
                     <div className='flex flex-row items-center justify-between p-4'>
-                      <button className='bg-red-400 text-white rounded-xl px-2 hover:bg-red-600' onClick={() => {  handleRemove()}}>RemoveItem</button>
+                      <button className='bg-red-400 text-white rounded-xl px-2 hover:bg-red-600' onClick={() => {handleRemove()}}>RemoveItem</button>
                       <button className='bg-blue-600 text-white rounded-xl px-2 hover:bg-blue-900' onClick={() => setOpenRemoveItem(false)}>Cancel</button>
                     </div>
                   </div>
                 }
 
 
-
-
-
-
                     <div className="relative shrink-0">
                       <img
-                        src={item.image?.[0]}
+                        src={item.variants[0]?.image?.[0]}
                         alt={item.name}
                         className="h-28 w-24 sm:h-32 sm:w-28 object-cover rounded-xl shadow-sm"
                       />
@@ -193,17 +212,17 @@ const Cart = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center bg-[#F4F7FA] rounded-full border border-slate-200">
                           <button
-                            onClick={() => decreaseQuantityFromCart(item._id)}
+                            onClick={() => decreaseQuantityFromCart(item.variants[0]?._id)}
                             aria-label="Decrease quantity"
                             className="w-9 h-9 flex items-center justify-center text-slate-600 hover:text-[#D9684A] transition-colors rounded-full"
                           >
                             −
                           </button>
                           <span className="w-8 text-center font-semibold text-[#101B2D]">
-                            {item.quantity}
+                            {cartItems.get(String(item.variants[0]._id))}
                           </span>
                           <button
-                            onClick={() => increaseQuantityInCart(item)}
+                            onClick={() => increaseQuantityInCart(item.variants[0]?._id)}
                             aria-label="Increase quantity"
                             className="w-9 h-9 flex items-center justify-center text-slate-600 hover:text-[#D9684A] transition-colors rounded-full"
                           >
@@ -216,7 +235,7 @@ const Cart = () => {
                           {item.pricing.mrp > item.pricing.sellingPrice && (
                             <p className="text-xs text-slate-400 line-through">
                               {symbol}
-                              {item.pricing.mrp}
+                              {Math.ceil(item.pricing.mrp)}
                             </p>
                           )}
                         </div>

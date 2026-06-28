@@ -18,6 +18,7 @@ const makeProducts = (products) => {
         tempProduct.featured = product.featured;
         tempProduct.newArrival = product.newArrival;
         tempProduct.slug = product.slug;
+        tempProduct.freeShipping = product.shipping.freeShipping;
         
         
 
@@ -43,11 +44,40 @@ const generateProductRelatedProducts = (products) => {
         temp.slug = item.slug;
         temp.size = item.variants[0].size;
         temp.color = item.variants[0].color;
-
+        temp.variantId = item.variants[0]._id;
+        temp._id = item._id;
         res.push(temp);
     })
     return res;
 
 }
 
-export {makeProducts ,generateProductRelatedProducts};
+
+const generateWishListProducts  = (products) => {
+
+    const res = [] ;
+
+    products.forEach((product,index) => {
+        let temp = {} ;
+        temp.productId = product._id;
+        temp.variantId  = product.variants[0]._id;
+        temp.image = product.variants[0].image[0];
+        temp.slug = product.slug;
+        temp.pricing = product.pricing;
+        temp.ratings = product.ratings;
+        temp.name = product.name;
+        temp.collectionType  = product.collection;
+        temp.size = product.variants[0].size;
+        temp.color = product.variants[0].color;;
+        res.push(temp);
+    });
+
+
+    return res;
+
+
+
+
+}
+
+export {makeProducts ,generateProductRelatedProducts ,generateWishListProducts};

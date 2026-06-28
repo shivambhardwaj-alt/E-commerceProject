@@ -13,14 +13,17 @@ const WishList = () => {
     setLoading(true);
     const fetchWishList = async () => {
       try {
-        const { data } = await axios.get(`${backendUrl}/api/products/getWishlist`, { variantsId: [...wishList] });
+        const { data } = await axios.post(`${backendUrl}/api/products/getWishlist`, { productsId: [...wishList]});
         console.log(data);
+        setProducts(data.data);
       }catch(error){
         console.log(error);
       }
   
   }
     fetchWishList();
+  
+    
     setLoading(false);
 
 
@@ -77,7 +80,7 @@ const WishList = () => {
                     {/* Product Image */}
                     <div className="w-20 h-24 flex-shrink-0">
                       <img
-                        src={product.variants[0]?.image[0]}
+                        src={product.image}
                         alt={product.name}
                         className="w-full h-full object-contain rounded border"
                       />
@@ -95,7 +98,7 @@ const WishList = () => {
 
                           {/* here addition of stars is needed  */}
                         </div>
-                        <span className="text-xs text-gray-500">| <span className={!product.shipping.freeShipping
+                        <span className="text-xs text-gray-500">| <span className={!product.freeShipping
                           && "line-through"}>Free Delivery</span></span>
                       </div>
 
@@ -119,7 +122,7 @@ const WishList = () => {
                       <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t border-gray-100">
                         <button
                           className="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-md hover:bg-blue-700 transition-colors"
-                          onClick={(e) => handleMoveToCart(e, product._id)}
+                          onClick={(e) => handleMoveToCart(e, product.variantId)}
                         >
                           Move to Cart
                         </button>
