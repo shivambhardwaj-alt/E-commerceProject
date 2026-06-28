@@ -90,8 +90,8 @@ const LatestCollection = () => {
                 />
                 <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
                   <div className="flex flex-col gap-2 bg-white/90 backdrop-blur-sm p-2 rounded-xl shadow-lg">
-                    <img src={assets.heart_icon} alt="Wishlist" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => {addToWishList(product) ; }} />
-                    <img src={assets.cart2} alt="Add to cart" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => {addToCart(product._id) ;  }} />
+                    <img src={assets.heart_icon} alt="Wishlist" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => {addToWishList(product._id) ; }} />
+                    <img src={assets.cart2} alt="Add to cart" className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" onClick={() => {addToCart(product.variants[0]._id) ;}} />
                   </div>
                 </div>
               </div>

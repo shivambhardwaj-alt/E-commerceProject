@@ -14,7 +14,7 @@ const ShopContextProvider = (props) => {
   const navigate = useNavigate()
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const googleClientId = import.meta.env.VITE_CLIENT_ID;
-  const [wishList,setWishList] = useState(new Map());
+  const [wishList,setWishList] = useState(new Set());
   const [verificationToken,setVerificationToken] = useState(null);
   const [orderItems, setOrderItems] = useState(null);
   const[productId , setProductId] = useState(new Map());
@@ -24,21 +24,17 @@ const [userToken, setUserToken] = useState(() => localStorage.getItem('userToken
 
 
   // this will add into the cart and  get cart count will display the count of added items in objects
- const addToWishList = (item) => {
+ const addToWishList = (id) => {
   setWishList(prev => {
-  
-    const newMap = new Map(prev);
-    const exist = newMap.get(item._id);
+    const newSet = new Set(prev);
+    const exist = newSet.has(id);
     if(exist){
       toast.warn("Product already Exists");
-      return newMap;
+      return newSet;
     }
-    newMap.set(item._id,item);
-    setWishList(newMap);
-    toast.success("Added in Wishlist")
-    return newMap;
-
-    
+    newSet.add(id);
+    toast.success("Added in Wishlist");
+    return newSet;
   });
 };
 

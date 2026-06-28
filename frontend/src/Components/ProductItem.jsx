@@ -81,13 +81,14 @@ const ProductItem = ({ product }) => {
   const handleWishlist = (e,safeProduct) => {
     e.preventDefault()
     e.stopPropagation()
-    addToWishList(safeProduct)
-    toast.success("Added to wishlist");  }
+    addToWishList(safeProduct._id)
+   }
 
   const handleCart = (e , safeProduct) => {
+    console.log(safeProduct);
     e.preventDefault()
     e.stopPropagation()
-    increaseQuantityInCart(safeProduct)
+    increaseQuantityInCart(safeProduct.variantId);
     
   }
 

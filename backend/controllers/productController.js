@@ -255,8 +255,27 @@ const getRelatedProducts = async(req, res) => {
 
 
 
+const getWishlistProducts = async(req, res) => {
+    try{
+
+        const arr = req.body;
+        console.log(arr);
+
+
+
+
+    }catch(error){
+        logger.error("Error happened in getWishListProducts" , error);
+        return res.status(500).json({success : false, message : "Internal Error"});
+
+    }
+}
+
+
 
 export { getBestProducts ,getOurFeaturedProducts ,getAllProducts ,getCategoryCollection ,getProductViaId,
-    getRelatedProducts, 
+    getRelatedProducts,
+    getWishlistProducts,
+     
 
 };

@@ -6,7 +6,8 @@ const makeProducts = (products) => {
     const res = [];
     products.forEach((product,inndex) => {
         let tempProduct = {}
-        tempProduct._id = product.variants[0]._id;
+        tempProduct.variantId = product.variants[0]._id;
+        tempProduct._id = product._id;
         tempProduct.name = product.name;
         tempProduct.brand = product.brand;
         tempProduct.pricing = product.pricing;
@@ -17,6 +18,7 @@ const makeProducts = (products) => {
         tempProduct.featured = product.featured;
         tempProduct.newArrival = product.newArrival;
         tempProduct.slug = product.slug;
+        
         
 
 

@@ -85,7 +85,7 @@ const BestSeller = () => {
                     className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform p-1 rounded hover:bg-gray-100" 
                     onClick={(e) => {
                       e.stopPropagation();
-                      addToWishList(product);
+                      addToWishList(product._id);
            
                     }}
                   />
@@ -95,7 +95,7 @@ const BestSeller = () => {
                     className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform p-1 rounded hover:bg-gray-100" 
                     onClick={(e) => {
                       e.stopPropagation();
-                      addToCart(product);
+                      addToCart(product.variants[0]._id);
                    
                     }}
                   />
