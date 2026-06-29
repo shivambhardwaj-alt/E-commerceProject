@@ -2,7 +2,7 @@ import React, { useReducer, useState } from 'react';
 import { assets } from '../assets/assets';
 
 const PersonalInfo = () => {
-  const [edit, setEdit] = useState(false);
+  const [edit, setEdit] = useState(true);
 
   const initialState = {
     firstName: 'Shivam',
