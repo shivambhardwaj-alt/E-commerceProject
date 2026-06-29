@@ -218,7 +218,7 @@ for (const product of products.docs) {
 }
 
 
-// ===========================CONTROLLER FOR MENS COLLECTION PAGE(FRONTEND) ================ 
+// ===========================CONTROLLER FOR category COLLECTION PAGE(FRONTEND) ================ 
 
 const getCategoryCollection = async (req, res) => {
     logger.info("Query Generated at getCategoryCollections");
@@ -339,6 +339,13 @@ const getCartItems = async (req, res) => {
     logger.info("Query Generated at getCartItems");
     try {
         const { variantsId } = req.body;
+        if(variantsId.length === 0){
+              return res.status(200).json({
+            success: true,
+            data: [],
+            message: "Products for the cartItems",
+        });
+        }
 
         const ids = variantsId.map(
             id => new mongoose.Types.ObjectId(id)

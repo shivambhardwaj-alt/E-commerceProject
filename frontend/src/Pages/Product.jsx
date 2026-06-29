@@ -11,7 +11,7 @@ const Product = () => {
   const [selectedVariant, setSelectedVariant] = useState(null);
 
   const { slug } = useParams();
-  const { increaseQuantityInCart, backendUrl } = useContext(ShopContext);
+  const { increaseQuantityInCart,addToCart ,  backendUrl } = useContext(ShopContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +28,7 @@ const Product = () => {
         const firstVariant = product?.variants?.[0] || null;
         setSelectedVariant(firstVariant);
         setSelectedImage(firstVariant?.image?.[0] || product?.image?.[0] || '');
+   
       } catch (error) {
         console.log(error);
       }
@@ -35,6 +36,12 @@ const Product = () => {
 
     if (slug && backendUrl) fetchProductDetails();
   }, [slug, backendUrl]);
+  useEffect(()=> {
+    console.log("Selected Variant is " , selectedVariant);
+  },[selectedVariant])
+
+
+
 
   const handleImageClick = (img) => setSelectedImage(img);
   const handleVariantChange = (variant) => {
@@ -199,7 +206,7 @@ const Product = () => {
               <div className="grid grid-cols-2 gap-4">
                 <button
                   className="bg-blue-600 text-white py-4 px-8 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl hover:bg-blue-700 transition-all duration-200"
-                  onClick={() => increaseQuantityInCart({ ...productData, selectedVariant })}
+                  onClick={() => addToCart(selectedVariant._id)}
                 >
                   Add to Cart
                 </button>

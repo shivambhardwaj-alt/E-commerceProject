@@ -19,6 +19,7 @@ const makeProducts = (products) => {
         tempProduct.newArrival = product.newArrival;
         tempProduct.slug = product.slug;
         tempProduct.freeShipping = product.shipping.freeShipping;
+        tempProduct.stock = product?.variants[0]?.stock;
         
         
 

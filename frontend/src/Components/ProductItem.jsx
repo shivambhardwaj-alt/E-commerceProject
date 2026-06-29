@@ -85,10 +85,11 @@ const ProductItem = ({ product }) => {
    }
 
   const handleCart = (e , safeProduct) => {
-    console.log(safeProduct);
+
+  
     e.preventDefault()
     e.stopPropagation()
-    increaseQuantityInCart(safeProduct.variantId);
+    addToCart(String(safeProduct.variantId));
     
   }
 

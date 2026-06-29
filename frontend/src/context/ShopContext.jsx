@@ -53,8 +53,13 @@ const isInWishlist = (item_id) => {
   const addToCart = (item_id) => {
   setCartItems(prev => {
     const newCart = new Map(prev);
+    if(newCart.has(item_id)){
+      toast.warn("Product Already in Cart!");
+      return newCart;
+    }
     const currentQty = newCart.get(item_id) ?? 0;
     newCart.set(item_id, currentQty + 1);
+    toast.success("Product Added ")
     return newCart;
   });
 };
@@ -99,50 +104,49 @@ const isInWishlist = (item_id) => {
 //================== REMOVING (Quantity) PRODUCT FROM THE CART ======================================
 
   const decreaseQuantityFromCart = (productId) => {
-    // console.log("Quantity is Getting decreased here");
+  
     const newCartMap = new Map(cartItems);
     let quantity = newCartMap.get(productId);
     if(quantity ===  1){
       newCartMap.delete(productId);
+      toast.warn("Product Deleted!");
 
     }else{
       newCartMap.set(productId , quantity - 1);
+      toast.success("Quantity Decreased");
     }
     setCartItems(newCartMap);
+
 
   }
 
   // =================  ADDING PRODUCT INTO THE CART============================
-  const  increaseQuantityInCart = (product) => {
+ const increaseQuantityInCart = (productId , stock) => {
     const newCartMap = new Map(cartItems);
     let quantity = 0 ;
-    if(newCartMap.has(product._id)){
-        quantity = newCartMap.get(product._id);
+    if(newCartMap.has(productId ,stock)){
+        quantity = newCartMap.get(productId);
     }
     
-    // let quantity = newCartMap.get(product._id);
+    quantity = newCartMap.get(productId);   // <-- overwrites the line above, always
   
-    // const totalQuantity = product.quantity !== ( undefined || null) ? product.quantity : 10; // make it zero after
-    const totalQuantity  = 10;
-    // console.log(cartItems);
+    const totalQuantity = stock ; 
+
     if(quantity + 1 <= totalQuantity){
-        newCartMap.set(product._id , quantity + 1);
+        newCartMap.set(productId , quantity + 1);
         setCartItems( new Map(newCartMap));
-
         toast.success("Added to cart");
-
     }else{
       toast.error("product out of Stock");
     }
-
-  }
+}
 
   // ==============================REMVOING ENTIRE PRODUCT FROM CART=========================
 
 
-  const removeItemFromCart = (product) => {
+  const removeItemFromCart = (productId) => {
     const newCartMap = new Map(cartItems);
-    const _id = product._id;
+    const _id = productId;
     if(newCartMap.has(_id)){
       newCartMap.delete(_id);
       setCartItems(newCartMap);
@@ -156,33 +160,21 @@ const isInWishlist = (item_id) => {
 
   // ================== MAKE ORDER DETAILS FOR PLACING ORDER ===========================
 
-  const makeOrder = () => {
+  const makeOrder = ({product}) => {
 
   // use entire cart and to make the entire order 
+    // now make order on the basis of cartData and useCartData to make the order with cartItems 
+    // cart data will give me the product and cartItem will give me quantity 
+   const mapLength = product.length;
+   for(let i = 0 ;i < mapLength ;i++){
 
-
-  const orderDetails  = []
-
-    for(const [productId,quantity]  in cartItems ) {
-      const tempOrder = {};
-        const product = winterProducts.find((item) => item._id === productId);
-        if(!product)continue;
-        tempOrder.name = product.name;
-        tempOrder.mrp = product.pricing.mrp;
-        tempOrder.sellingPrice = product.pricing.sellingPrice;
-        tempOrder.discountpercentage = product.pricing.discountPercentage;
-        tempOrder.taxIncluded = product.pricing.taxIncluded;
-        tempOrder.gstPercentage = product.pricing.gstPercentage;
-
-        
+    const temp = {};
+    temp.name =product.name;
 
 
 
 
-    }
-
-  return null;
-
+   }
 
   }
 
@@ -220,6 +212,7 @@ const isInWishlist = (item_id) => {
     getCartAmount,
     increaseQuantityInCart,
     removeItemFromCart,
+    decreaseQuantityFromCart,
 
 
   };
