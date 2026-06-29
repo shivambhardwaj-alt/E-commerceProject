@@ -129,6 +129,9 @@ import van from './van.svg';
 import location from './location (2).svg';
 import sale from './sale.jpg';
 import found from './fouund.jpeg';
+import first from './first.jpeg';
+import second from './second.jpeg';
+import third from './third.jpeg';
 
 export const assets = {
     logo,
@@ -153,6 +156,10 @@ export const assets = {
     Latest1,
     Latest2,
     heart_icon,
+    first,
+    second,
+    third,
+    
 cart2,    
 girlBanner,
 twitter,

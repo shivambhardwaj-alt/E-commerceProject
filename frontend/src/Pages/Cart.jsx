@@ -42,8 +42,8 @@ const Cart = () => {
       }
     }
 
-    if (backendUrl) fetchAllCartData();
-  }, [cartItems, backendUrl]);
+     fetchAllCartData();
+  }, [cartItems]);
 
 
   useEffect(() => {
@@ -138,7 +138,7 @@ const Cart = () => {
                           </span>
                           <button
                             onClick={() =>
-                              increaseQuantityInCart(item.variants?.[0]?._id, item.variants?.[0]?.stock)
+                              increaseQuantityInCart(item.variants[0]?._id, item.variants[0]?.stock)
                             }
                             className="w-9 h-9 flex items-center justify-center text-slate-600"
                           >

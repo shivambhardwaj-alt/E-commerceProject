@@ -51,6 +51,7 @@ const isInWishlist = (item_id) => {
 
 
   const addToCart = (item_id) => {
+    console.log(cartItems);
   setCartItems(prev => {
     const newCart = new Map(prev);
     if(newCart.has(item_id)){
