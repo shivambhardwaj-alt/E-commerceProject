@@ -25,7 +25,9 @@ const Cart = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+
     async function fetchAllCartData() {
+      console.log("Call is made for the current Item");
       try {
         setLoading(true);
         const variantsId = [...cartItems.keys()];
